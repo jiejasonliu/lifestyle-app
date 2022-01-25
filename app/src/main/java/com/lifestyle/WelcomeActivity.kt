@@ -7,7 +7,7 @@ import android.widget.TextView
 import android.os.Handler
 
 class WelcomeActivity : AppCompatActivity() {
-    private lateinit var username : TextView
+    private lateinit var username: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
