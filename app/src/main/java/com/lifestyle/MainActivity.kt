@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.buttonSignup -> {
-                // todo: go to signup page
+                startActivity(Intent(this, SignupActivity::class.java))
             }
 
             R.id.devButtonHome -> {
