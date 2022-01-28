@@ -64,7 +64,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.cardViewLogout -> {
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
+                finish()
             }
         }
     }
