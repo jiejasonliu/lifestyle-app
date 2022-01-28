@@ -39,10 +39,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (username.text.isNullOrEmpty() || password.text.isNullOrEmpty()) {
                     Toast.makeText(this, "Please complete all the fields", Toast.LENGTH_SHORT).show()
                 }
-
-                val intent = Intent(this, WelcomeActivity::class.java)
-                intent.putExtra("username", username.text.toString())
-                startActivity(intent)
             }
 
             R.id.buttonSignup -> {
