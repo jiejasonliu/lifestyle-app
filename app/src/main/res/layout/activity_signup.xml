@@ -9,11 +9,12 @@
     <!-- profile picture container -->
     <LinearLayout
         android:id="@+id/linearLayoutPfpContainer"
-        android:background="@color/green_500"
         android:layout_width="0dp"
-        android:layout_height="184dp"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
+        android:layout_height="128dp"
+        android:background="@drawable/dashboard_background"
+
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,37 +23,65 @@
             android:id="@+id/imageViewProfilePicture"
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:layout_marginTop="16dp"
             android:padding="3dp"
             app:shapeAppearanceOverlay="@style/imageViewRounded"
             app:srcCompat="@drawable/default_pp"
-            app:strokeColor="@color/white"
+            app:strokeColor="@color/orange_50"
             app:strokeWidth="1dp" />
+
+        <Space
+            android:layout_width="48dp"
+            android:layout_height="match_parent" />
 
         <Button
             android:id="@+id/buttonChangePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/green_100"
-            android:text="Change Picture"
-            android:textColor="@color/orange_800"
+            android:text="@string/changePicture"
             android:textStyle="bold" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/pfpSignupSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutPfpContainer"
+        app:layout_constraintBottom_toTopOf="@id/scrollViewEditProfileSignup"/>
+
     <ScrollView
+        android:id="@+id/scrollViewEditProfileSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/orange_50"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutPfpContainer">
+        app:layout_constraintTop_toBottomOf="@+id/pfpSignupSeparator">
 
-        <fragment
-            android:id="@+id/fragmentEditProfileSignup"
-            android:name="com.lifestyle.fragments.EditProfileFragment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <fragment
+                android:id="@+id/fragmentEditProfileSignup"
+                android:name="com.lifestyle.fragments.EditProfileFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/buttonSubmitSignup"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/finishSignup"
+                android:textStyle="bold" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+        </LinearLayout>
     </ScrollView>
 
 

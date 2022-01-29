@@ -52,7 +52,7 @@
             android:id="@+id/buttonSignup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="@string/signUp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@+id/editTextTextPassword"
             app:layout_constraintTop_toTopOf="@+id/buttonLogin" />
@@ -65,7 +65,7 @@
             android:id="@+id/buttonLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/login"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="@+id/editTextTextPassword"
             app:layout_constraintStart_toEndOf="@+id/buttonSignup" />
