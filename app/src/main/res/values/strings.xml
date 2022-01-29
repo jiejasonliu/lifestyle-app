@@ -3,6 +3,7 @@
 
     <string name="usernameFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_</string>
     <string name="noSpecialCharFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890</string>
+    <string name="noSpecialCharWithSpacesFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz1234567890</string>
 
     <string name="changePicture">Change Picture</string>
     <string name="signUp">Sign Up</string>

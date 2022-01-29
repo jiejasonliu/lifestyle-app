@@ -26,6 +26,7 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.buttonChangePicture -> {
+                // todo: actually hook up and save picture to URI
                 Toast.makeText(this, "Change Picture Clicked", Toast.LENGTH_SHORT).show()
             }
         }

@@ -1,6 +1,8 @@
 package com.lifestyle.interfaces
 
 interface IUserProfile {
+    val username: String?    // should be unique per user!
+
     val fullName: String    // no guarantees: culturally inclusive
     val age: Int
     val city: String
@@ -9,5 +11,5 @@ interface IUserProfile {
     val height: Int         // in inches (but UI can calculate ft+in)
     val weight: Int         // in lbs
     val sex: String
-    val pictureURI: String
+    val pictureURI: String? // optional
 }

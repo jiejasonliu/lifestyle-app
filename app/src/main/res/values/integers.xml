@@ -3,7 +3,7 @@
     <integer name="max_username_length">30</integer>
     <integer name="max_full_name_length">64</integer>
     <integer name="max_age_length">3</integer>
-    <integer name="max_location_length">100</integer>
+    <integer name="max_location_length">64</integer>
     <integer name="max_height_ft_length">2</integer>
     <integer name="max_height_in_length">2</integer>
     <integer name="max_weight_length">4</integer>

@@ -33,6 +33,8 @@
                 android:id="@+id/textInputEditTextUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:digits="@string/usernameFilter"
                 android:inputType="textFilter"
                 android:maxLength="@integer/max_username_length" />
@@ -41,10 +43,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="horizontal">
 
             <!-- full name -->
             <com.google.android.material.textfield.TextInputLayout
@@ -93,15 +92,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="horizontal">
 
             <!-- city -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutCity"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
@@ -110,13 +105,16 @@
                 android:hint="@string/city"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/ic_location_city_24"
-                app:startIconTint="@color/orange_800">
+                app:startIconTint="@color/orange_800"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputEditTextCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="@string/noSpecialCharFilter"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits="@string/noSpecialCharWithSpacesFilter"
                     android:inputType="textFilter"
                     android:maxLength="@integer/max_location_length" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -137,7 +135,9 @@
                     android:id="@+id/textInputEditTextState"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="@string/noSpecialCharFilter"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits="@string/noSpecialCharWithSpacesFilter"
                     android:inputType="textFilter"
                     android:maxLength="@integer/max_location_length" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -160,7 +160,9 @@
                 android:id="@+id/textInputEditTextCountry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="@string/noSpecialCharFilter"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:digits="@string/noSpecialCharWithSpacesFilter"
                 android:inputType="textFilter"
                 android:maxLength="@integer/max_location_length" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -213,7 +215,9 @@
                     android:id="@+id/textInputEditTextSex"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="@string/noSpecialCharFilter"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:digits="@string/noSpecialCharWithSpacesFilter"
                     android:inputType="textFilter"
                     android:maxLength="@integer/max_sex_length" />
             </com.google.android.material.textfield.TextInputLayout>
