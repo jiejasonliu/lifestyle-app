@@ -90,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_profile" />
+                    app:srcCompat="@drawable/ic_profile_64" />
 
                 <!--Profile Text-->
                 <TextView
@@ -135,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_bmi" />
+                    app:srcCompat="@drawable/ic_bmi_64" />
 
                 <!--BMI Calculator Text-->
                 <TextView
@@ -180,7 +180,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_hiking" />
+                    app:srcCompat="@drawable/ic_hiking_64" />
 
                 <!--Hiking Trails Text-->
                 <TextView
@@ -225,7 +225,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_weather" />
+                    app:srcCompat="@drawable/ic_weather_64" />
 
                 <!--Weather Text-->
                 <TextView
@@ -270,7 +270,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_settings" />
+                    app:srcCompat="@drawable/ic_settings_64" />
 
                 <!--Settings Text-->
                 <TextView
@@ -315,7 +315,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_logout" />
+                    app:srcCompat="@drawable/ic_logout_64" />
 
                 <!--Logout Text-->
                 <TextView

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Lifestyle</string>
+    <string name="full_name">Full Name</string>
+    <string name="age">Age</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="country">Country</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="sex">Sex</string>
 </resources>
