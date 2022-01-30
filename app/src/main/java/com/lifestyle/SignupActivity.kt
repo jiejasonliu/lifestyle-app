@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.lifestyle.fragments.EditProfileFragment
+import com.lifestyle.models.LoginSession
 
 class SignupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var changePictureButton: Button
@@ -41,11 +42,24 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
 
                 if (signupFragment == null) {
                     Toast.makeText(this, "Waiting for form to load...", Toast.LENGTH_SHORT).show()
+                    return
                 }
 
-                val result = signupFragment.aggregateFields()
-                val error = result?.firstError ?: "<no error>"
-                Toast.makeText(this, result?.firstError, Toast.LENGTH_SHORT).show()
+                // pull in data from fields and write if successful
+                val result = signupFragment.aggregateFieldsAndWrite()
+
+                if (result == null) {
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                if (!result.success || result.userProfile == null) {
+                    Toast.makeText(this, result?.firstError, Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                // successful
+                LoginSession.getInstance(applicationContext).login(result.userProfile.username)
             }
         }
     }

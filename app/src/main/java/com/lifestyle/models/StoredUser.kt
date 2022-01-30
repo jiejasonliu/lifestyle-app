@@ -7,13 +7,19 @@ import com.lifestyle.interfaces.IUserProfile
 /**
  * @param sharedPreferences name used to create this instance should be equivalent to the username
  */
-class StoredUser(private val sharedPreferences: SharedPreferences) : IUserProfile {
+class StoredUser (private val appContext: Context, private val _username: String) : IUserProfile {
 
-    constructor(appContext: Context, username: String) :
-            this(appContext.getSharedPreferences(username, Context.MODE_PRIVATE))
+    private val sharedPreferences: SharedPreferences =
+        appContext.getSharedPreferences(_username, Context.MODE_PRIVATE)
+
+    init {
+        val editor = sharedPreferences.edit()
+        editor.putString("username", _username)
+        editor.apply()
+    }
 
     // username should not be able to be modified
-    override val username: String? = sharedPreferences.getString("username", null)
+    override val username: String = sharedPreferences.getString("username", null) ?: "<error>"
 
     override var fullName: String
         get() = sharedPreferences.getString("fullName", null) ?: ""

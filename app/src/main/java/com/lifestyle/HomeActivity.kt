@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import com.lifestyle.models.LoginSession
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewProfile : CardView
@@ -64,6 +66,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.cardViewLogout -> {
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
+                LoginSession.getInstance(applicationContext).logout()
                 finish()
             }
         }

@@ -24,6 +24,7 @@ class LoginSession private constructor(private val appContext: Context) {
 
     fun getLoggedInUser(): StoredUser? {
         if (isLoggedIn()) {
+            println(getSharedPreferences().all)
             val username = getSharedPreferences().getString(SESSION_USERNAME, null)
             if (username != null) return StoredUser(appContext, username)
         }
@@ -31,7 +32,8 @@ class LoginSession private constructor(private val appContext: Context) {
     }
 
     fun isLoggedIn(): Boolean {
-        return getSharedPreferences().getString(SESSION_USERNAME, null) != LOGGED_OUT_VALUE
+        return getSharedPreferences().getString(SESSION_USERNAME, null) != LOGGED_OUT_VALUE &&
+                !getSharedPreferences().getString(SESSION_USERNAME, null).isNullOrBlank()
     }
 
     fun login(username: String) {

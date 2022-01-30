@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.textfield.TextInputLayout
 import com.lifestyle.R
+import com.lifestyle.interfaces.IUserProfile
 import com.lifestyle.models.EditProfileResult
+import com.lifestyle.models.StoredUser
 
 class EditProfileFragment : Fragment() {
 
@@ -34,7 +36,7 @@ class EditProfileFragment : Fragment() {
 
         textLayoutUsername = view.findViewById(R.id.textInputLayoutUsername)
         textLayoutFullName = view.findViewById(R.id.textInputLayoutFullName)
-        textLayoutAge = view.findViewById(R.id.textInputLayoutCity)
+        textLayoutAge = view.findViewById(R.id.textInputLayoutAge)
         textLayoutCity = view.findViewById(R.id.textInputLayoutCity)
         textLayoutState = view.findViewById(R.id.textInputLayoutState)
         textLayoutCountry = view.findViewById(R.id.textInputLayoutCountry)
@@ -45,10 +47,12 @@ class EditProfileFragment : Fragment() {
     }
 
     /**
+     * If all the fields are validated, write user profile into SharedPreferences.
+     *
      * @return <T> aggregate fields into <T>.userProfile if <T>.success is true
      *          otherwise <T>.firstError will contain the first error found
      */
-    fun aggregateFields(): EditProfileResult? {
+    fun aggregateFieldsAndWrite(): EditProfileResult? {
         // note: field lengths are limited via @strings/... (strings.xml)
         // the purpose here is to validate things that aren't possible via XML
 
@@ -80,42 +84,78 @@ class EditProfileFragment : Fragment() {
         if (getText(textLayoutSex).isNullOrBlank())
             return withErr(textLayoutSex.hint, "Must not be empty")
 
-        // todo: everything below ooga booga
-
         // weight pass
         if (getText(textLayoutWeight).isNullOrBlank())
             return withErr(textLayoutWeight.hint, "Must not be empty")
+        else if (getText(textLayoutWeight).toInt() < 1)
+            return withErr(textLayoutWeight.hint, "Must be greater than 1")
 
         // height pass
+        // ft.
         if (getText(textLayoutHeightFt).isNullOrBlank())
-            return withErr(textLayoutWeight.hint, "Must not be empty")
+            return withErr(textLayoutHeightFt.hint, "Must not be empty")
+        else if (getText(textLayoutHeightFt).toInt() < 0 || getText(textLayoutHeightFt).toInt() > 11)
+            return withErr(textLayoutHeightFt.hint, "Must be between 0-11")
 
+        // in.
         if (getText(textLayoutHeightIn).isNullOrBlank())
-            return withErr(textLayoutWeight.hint, "Must not be empty")
+            return withErr(textLayoutHeightIn.hint, "Must not be empty")
+        else if (getText(textLayoutHeightIn).toInt() < 0 || getText(textLayoutHeightIn).toInt() > 11)
+            return withErr(textLayoutHeightIn.hint, "Must be between 0-11")
 
-        return null
+        if (context == null)
+            return withErr("Lifestyle", "Something went wrong")
+
+        // create user in model storage
+        val username: String = getText(textLayoutUsername)
+        val user = StoredUser(requireContext(), username)
+        writeToStoredUser(user)
+
+        return EditProfileResult(
+            success = true,
+            userProfile = user
+        )
     }
 
     private fun getText(layout: TextInputLayout?): String {
-        println(layout?.editText?.text?.toString()?.trim() ?: "")
         return layout?.editText?.text?.toString()?.trim() ?: ""
     }
 
     private fun withErr(atViewName: String, errorDetails: String): EditProfileResult {
         return EditProfileResult(
-            success=true,
-            firstError="$atViewName: $errorDetails",
-            userProfile=null,
+            success = false,
+            firstError = "$atViewName: $errorDetails",
+            userProfile = null,
         )
     }
 
     private fun withErr(atViewName: CharSequence?, errorDetails: String): EditProfileResult {
         return EditProfileResult(
-            success=true,
-            firstError="$atViewName: $errorDetails",
-            userProfile=null,
+            success = false,
+            firstError = "$atViewName: $errorDetails",
+            userProfile = null,
         )
     }
 
+    private fun writeToStoredUser(user: StoredUser) {
+        val username: String = getText(textLayoutUsername)
+        val fullName: String = getText(textLayoutFullName)
+        val age: Int = getText(textLayoutAge).toInt()
+        val city: String = getText(textLayoutCity)
+        val state: String = getText(textLayoutState)
+        val country: String = getText(textLayoutCountry)
+        val sex: String = getText(textLayoutSex)
+        val weight: Int = getText(textLayoutWeight).toInt()
+        val height: Int =
+            (12 * getText(textLayoutHeightFt).toInt()) + getText(textLayoutHeightIn).toInt()
 
+        user.fullName = fullName
+        user.age = age
+        user.city = city
+        user.state = state
+        user.country = country
+        user.sex = sex
+        user.weight = weight
+        user.height = height
+    }
 }
