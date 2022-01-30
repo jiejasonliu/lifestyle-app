@@ -38,16 +38,27 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         client = LocationServices.getFusedLocationProviderClient(this)
 
+        // Get user location
         getCurrentLocation()
     }
 
     override fun onMapReady(mMap: GoogleMap) {
+        // Get device location
         latlng = LatLng(loc.latitude, loc.longitude)
+
+        // Set markers
         var options = MarkerOptions().position(latlng) as MarkerOptions
+
+        // Label for markers
         options.title("You are here")
+
+        // Zoom into device location
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F))
+
+        // Add markers to map
         mMap.addMarker(options)
 
+        // TODO: Show hiking trails near device location
         var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" +
                 loc.latitude + "," + loc.longitude +
                 "&radius=5000&types=hiking_trails&sensor=true&key=" +
@@ -56,6 +67,7 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getCurrentLocation() {
+        // Check if device has permission for device location
         var task = if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -64,11 +76,12 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Ask permission
+            // If no permission, ask permission and override onRequestPermissionResult callback
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             return
         }
         else {
+            // If yes permission, wait for map to ready and goto onMapReady callback
             client.lastLocation.addOnSuccessListener { location -> if (location != null) {
                     loc = location
                     mapFragment.getMapAsync(this)
@@ -83,6 +96,7 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Given that the request code matches to the code above, if user gives permission get device location
         if (requestCode == 1) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation()
