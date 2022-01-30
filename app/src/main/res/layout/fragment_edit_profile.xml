@@ -20,13 +20,13 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:hint="@string/username"
             app:counterEnabled="true"
             app:counterMaxLength="@integer/max_username_length"
             app:endIconMode="clear_text"
-            app:helperText="Special characters are not allowed except: _"
+            app:helperText="@string/username_helperText"
             app:helperTextEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -51,7 +51,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.66"
                 android:hint="@string/full_name"
@@ -69,11 +69,11 @@
 
             <!-- age -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutFirstName"
+                android:id="@+id/textInputLayoutAge"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.33"
                 android:hint="@string/age"
@@ -81,7 +81,7 @@
                 app:startIconTint="@color/orange_800">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextFirstName"
+                    android:id="@+id/textInputEditTextAge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -99,7 +99,7 @@
                 android:id="@+id/textInputLayoutCity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.55"
                 android:hint="@string/city"
@@ -125,7 +125,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.45"
                 android:hint="@string/state"
@@ -149,7 +149,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:hint="@string/country"
             app:endIconMode="clear_text"
@@ -175,37 +175,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!-- weight -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutWeight"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="0.5"
-                android:hint="@string/weight_detailed"
-                app:startIconDrawable="@drawable/ic_weight_24"
-                app:startIconTint="@color/orange_800"
-                app:suffixText="@string/weight_lbs">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="@integer/max_weight_length" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <!-- sex -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutSex"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_weight="0.5"
+                android:layout_weight="0.55"
                 android:hint="@string/sex"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/ic_sex_24"
@@ -221,13 +199,35 @@
                     android:inputType="textFilter"
                     android:maxLength="@integer/max_sex_length" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- weight -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutWeight"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="0.45"
+                android:hint="@string/weight_detailed"
+                app:startIconDrawable="@drawable/ic_weight_24"
+                app:startIconTint="@color/orange_800"
+                app:suffixText="@string/weight_lbs">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditTextWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="@integer/max_weight_length" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <TextView
             android:id="@+id/textViewHeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/height"
             android:textColor="@color/grey"
@@ -249,7 +249,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_weight="0.5"
                 android:hint="@string/height_feet"
                 app:suffixText="@string/height_ft">
@@ -268,7 +268,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_weight="0.5"
                 android:hint="@string/height_inches"
                 app:suffixText="@string/height_in">
