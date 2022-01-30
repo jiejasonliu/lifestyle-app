@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Lifestyle</string>
 
+    <string name="title_activity_hiking">HikingActivity</string>
+
     <string name="usernameFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_</string>
     <string name="noSpecialCharFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890</string>
     <string name="noSpecialCharWithSpacesFilter">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz1234567890</string>

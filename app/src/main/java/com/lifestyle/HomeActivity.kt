@@ -52,6 +52,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.cardViewHiking -> {
                 Toast.makeText(this, "Hiking Trails Clicked", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, HikingActivity::class.java))
             }
 
             R.id.cardViewWeather -> {
