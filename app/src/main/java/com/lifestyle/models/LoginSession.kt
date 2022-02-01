@@ -6,9 +6,9 @@ import android.content.SharedPreferences
 class LoginSession private constructor(private val appContext: Context) {
 
     companion object Factory {
-        const val SHARED_PREF_NAME = "lifestyle_login_session"
-        const val SESSION_USERNAME = "session_state"
-        const val LOGGED_OUT_VALUE = "#LOGGED-OUT#"
+        const val SHARED_PREF_NAME = "lifestyle_login_session"  // key => SharedPreference
+        const val SESSION_USERNAME = "session_state"           // SP key => user who is logged in
+        const val LOGGED_OUT_VALUE = "#LOGGED-OUT#"           // value for session_state if no login
 
         private var instance: LoginSession? = null
 
@@ -24,9 +24,9 @@ class LoginSession private constructor(private val appContext: Context) {
 
     fun getLoggedInUser(): StoredUser? {
         if (isLoggedIn()) {
-            println(getSharedPreferences().all)
             val username = getSharedPreferences().getString(SESSION_USERNAME, null)
-            if (username != null) return StoredUser(appContext, username)
+            if (username != null)
+                return StoredUser(appContext, username)
         }
         return null
     }
@@ -49,6 +49,6 @@ class LoginSession private constructor(private val appContext: Context) {
     }
 
     private fun getSharedPreferences(): SharedPreferences {
-        return appContext.getSharedPreferences("lifestyle_login_session", Context.MODE_PRIVATE)
+        return appContext.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
     }
 }

@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.lifestyle.interfaces.IUserProfile
 
 /**
- * @param sharedPreferences name used to create this instance should be equivalent to the username
+ * @param _username this must be unique for each user; used as a key to the user's SharedPreference
  */
 class StoredUser (private val appContext: Context, private val _username: String) : IUserProfile {
 
@@ -13,9 +13,12 @@ class StoredUser (private val appContext: Context, private val _username: String
         appContext.getSharedPreferences(_username, Context.MODE_PRIVATE)
 
     init {
-        val editor = sharedPreferences.edit()
-        editor.putString("username", _username)
-        editor.apply()
+        // this user does not have a username in SharedPreferences on the first instantiation
+        if (!sharedPreferences.contains("username")) {
+            val editor = sharedPreferences.edit()
+            editor.putString("username", _username)
+            editor.apply()
+        }
     }
 
     // username should not be able to be modified

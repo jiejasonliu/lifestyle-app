@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import com.lifestyle.models.LoginSession
+import com.lifestyle.models.StoredUser
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewProfile : CardView

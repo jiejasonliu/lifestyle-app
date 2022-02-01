@@ -1,7 +1,10 @@
 package com.lifestyle
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -40,11 +43,6 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
                 signupFragment =
                     supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
 
-                if (signupFragment == null) {
-                    Toast.makeText(this, "Waiting for form to load...", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
                 // pull in data from fields and write if successful
                 val result = signupFragment.aggregateFieldsAndWrite()
 
@@ -54,12 +52,18 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 if (!result.success || result.userProfile == null) {
-                    Toast.makeText(this, result?.firstError, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
                     return
                 }
 
                 // successful
                 LoginSession.getInstance(applicationContext).login(result.userProfile.username)
+                finishSignupButton.isEnabled = false
+                Handler(Looper.getMainLooper()).postDelayed({
+                    finish()
+                    startActivity(Intent(applicationContext, HomeActivity::class.java))
+                    finishSignupButton.isEnabled = true
+                }, 250)
             }
         }
     }
