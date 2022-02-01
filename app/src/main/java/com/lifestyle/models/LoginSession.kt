@@ -13,8 +13,8 @@ class LoginSession private constructor(private val appContext: Context) {
         private var instance: LoginSession? = null
 
         fun getInstance(appContext: Context): LoginSession {
-            if (instance == null) {
-                synchronized(this) {
+            synchronized(this) {
+                if (instance == null) {
                     instance = LoginSession(appContext)
                 }
             }
