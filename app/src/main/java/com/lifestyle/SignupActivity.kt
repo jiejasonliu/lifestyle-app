@@ -12,7 +12,6 @@ import com.lifestyle.fragments.EditProfileFragment
 import com.lifestyle.models.LoginSession
 
 class SignupActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var changePictureButton: Button
     private lateinit var finishSignupButton: Button
     private lateinit var signupFragment: EditProfileFragment
 
@@ -24,21 +23,14 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
         supportActionBar?.hide()
 
         // populate late init
-        changePictureButton = findViewById(R.id.buttonChangePicture)
         finishSignupButton = findViewById(R.id.buttonFinishSignup)
 
         // register listeners
-        changePictureButton.setOnClickListener(this)
         finishSignupButton.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.buttonChangePicture -> {
-                // todo: actually hook up and save picture to URI
-                Toast.makeText(this, "Change Picture Clicked", Toast.LENGTH_SHORT).show()
-            }
-
             R.id.buttonFinishSignup -> {
                 signupFragment =
                     supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment

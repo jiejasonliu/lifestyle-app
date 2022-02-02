@@ -14,6 +14,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- profile picture container -->
+        <LinearLayout
+            android:id="@+id/linearLayoutPfpContainer"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:background="@drawable/dashboard_background"
+
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageViewProfilePicture"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:padding="3dp"
+                app:shapeAppearanceOverlay="@style/imageViewRounded"
+                app:srcCompat="@drawable/default_pp"
+                app:strokeColor="@color/orange_50"
+                app:strokeWidth="1dp" />
+
+            <Space
+                android:layout_width="48dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/buttonChangePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/changePicture"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <!-- username -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutUsername"

@@ -1,18 +1,33 @@
 package com.lifestyle.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import com.lifestyle.R
 import com.lifestyle.interfaces.IUserProfile
 import com.lifestyle.models.EditProfileResult
 import com.lifestyle.models.StoredUser
+import androidx.core.app.ActivityCompat.startActivityForResult
 
-class EditProfileFragment : Fragment() {
+import android.content.Intent
+import android.graphics.ImageDecoder
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import java.net.URI
 
+
+class EditProfileFragment : Fragment(), View.OnClickListener {
+
+    private lateinit var changePictureButton: Button
+    private lateinit var profileImageView: ShapeableImageView
     private lateinit var textLayoutUsername: TextInputLayout
     private lateinit var textLayoutFullName: TextInputLayout
     private lateinit var textLayoutAge: TextInputLayout
@@ -24,6 +39,8 @@ class EditProfileFragment : Fragment() {
     private lateinit var textLayoutHeightFt: TextInputLayout
     private lateinit var textLayoutHeightIn: TextInputLayout
 
+    private var pictureURI: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +51,8 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        changePictureButton = view.findViewById(R.id.buttonChangePicture)
+        profileImageView = view.findViewById(R.id.imageViewProfilePicture)
         textLayoutUsername = view.findViewById(R.id.textInputLayoutUsername)
         textLayoutFullName = view.findViewById(R.id.textInputLayoutFullName)
         textLayoutAge = view.findViewById(R.id.textInputLayoutAge)
@@ -44,7 +63,35 @@ class EditProfileFragment : Fragment() {
         textLayoutWeight = view.findViewById(R.id.textInputLayoutWeight)
         textLayoutHeightFt = view.findViewById(R.id.textInputLayoutHeightFt)
         textLayoutHeightIn = view.findViewById(R.id.textInputLayoutHeightIn)
+
+        // save URI for when user submits the form
+        changePictureButton.setOnClickListener(this)
     }
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.buttonChangePicture -> {
+                val photoPickerIntent = Intent(Intent.ACTION_PICK).apply {
+                    type = "image/*"
+                }
+                photoPickerResultLauncher.launch(photoPickerIntent)
+            }
+        }
+    }
+
+    // on: photo picker activity result
+    private var photoPickerResultLauncher =
+        registerForActivityResult(StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = result.data?.data
+
+                // fill in pictureURI field and update UI
+                if (uri != null) {
+                    pictureURI = uri.toString()
+                    profileImageView.setImageURI(uri)
+                }
+            }
+        }
 
     /**
      * If all the fields are validated, write user profile into SharedPreferences.
@@ -157,5 +204,7 @@ class EditProfileFragment : Fragment() {
         user.sex = sex
         user.weight = weight
         user.height = height
+
+        user.pictureURI = pictureURI    // null <> default image
     }
 }

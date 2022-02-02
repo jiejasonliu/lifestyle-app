@@ -35,12 +35,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewProfilePicture"
             android:layout_width="0dp"
             android:layout_height="64dp"
-            android:layout_gravity="center"
+            android:padding="3dp"
             android:layout_weight="1"
+            app:shapeAppearanceOverlay="@style/imageViewRounded"
             tools:srcCompat="@tools:sample/avatars" />
 
     </LinearLayout>
