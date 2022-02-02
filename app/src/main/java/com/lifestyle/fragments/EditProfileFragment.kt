@@ -21,6 +21,9 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.net.toUri
+import com.lifestyle.helpers.ExternalStorageSaver
+import java.io.File
 import java.net.URI
 
 
@@ -40,6 +43,8 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     private lateinit var textLayoutHeightIn: TextInputLayout
 
     private var pictureURI: String? = null
+    private var ICON_WIDTH: Int = 100
+    private var ICON_HEIGHT: Int = 100
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,8 +92,17 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
 
                 // fill in pictureURI field and update UI
                 if (uri != null) {
-                    pictureURI = uri.toString()
-                    profileImageView.setImageURI(uri)
+                    val source = ImageDecoder.createSource(requireActivity().contentResolver, uri)
+                    val bitmap = ImageDecoder.decodeBitmap(source)
+
+                    // todo: maybe not save immediately? we don't know if the user will finish
+                    //  unfortunately, this will require significant infrastructural changes
+                    val physicalUri =
+                        ExternalStorageSaver.saveBitmap(bitmap, ICON_WIDTH, ICON_HEIGHT)
+                    if (physicalUri != null) {
+                        pictureURI = physicalUri
+                        profileImageView.setImageURI(physicalUri.toUri())
+                    }
                 }
             }
         }

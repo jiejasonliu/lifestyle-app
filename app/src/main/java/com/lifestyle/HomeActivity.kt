@@ -1,17 +1,17 @@
 package com.lifestyle
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
+import com.lifestyle.helpers.ExternalStorageSaver
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
-import java.net.URI
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewProfile: CardView
@@ -50,7 +50,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         // todo: we can change StoredUser? -> StoredUser if we disallow this page unless logged in
         if (user?.pictureURI != null) {
-            imageViewProfilePicture.setImageURI(user!!.pictureURI!!.toUri())
+            val uri: Uri = user!!.pictureURI!!.toUri()
+            imageViewProfilePicture.setImageURI(uri)
         }
         else {
             imageViewProfilePicture.setImageResource(R.drawable.default_pp)
