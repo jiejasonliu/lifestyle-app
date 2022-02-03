@@ -15,11 +15,19 @@ import android.content.pm.PackageManager
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlinx.coroutines.*
+import org.json.JSONArray
+import java.util.HashMap
+import org.json.JSONObject
+import java.lang.Exception
 
 
-class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
+class HikingActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope by MainScope() {
 
-    private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityHikingBinding
     private lateinit var client: FusedLocationProviderClient
     private lateinit var mapFragment: SupportMapFragment
@@ -50,7 +58,7 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         var options = MarkerOptions().position(latlng) as MarkerOptions
 
         // Label for markers
-        options.title("You are here")
+        options.title("You Are Here")
 
         // Zoom into device location
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F))
@@ -58,12 +66,46 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         // Add markers to map
         mMap.addMarker(options)
 
-        // TODO: Show hiking trails near device location
-        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" +
+        // Create URL to find hiking trails near device location
+        var stringUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=hiking_trail&location=" +
                 loc.latitude + "," + loc.longitude +
-                "&radius=5000&types=hiking_trails&sensor=true&key=" +
+                "&radius=5000&types=tourist_attraction&sensor=true&key=" +
                 resources.getString(R.string.google_maps_key)
 
+        // Download json data from URL
+        try {
+            // Get trail head locations on a new thread
+            launch(Dispatchers.IO) {
+                // Call Google Places API
+                val data = downloadUrl(stringUrl)
+
+                // Parse the response
+                val jsonParser = JsonParser()
+                val response = jsonParser.parseResponse(JSONObject(data))
+
+                // Go through each item from the response and create a list of map markers
+                val responseIterator = response.iterator()
+                val optionsList = ArrayList<MarkerOptions>()
+                while(responseIterator.hasNext()) {
+                    val trail = responseIterator.next()
+                    latlng = LatLng(trail["lat"]!!.toDouble(), trail["long"]!!.toDouble())
+                    options = MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)) as MarkerOptions
+                    options.title(trail["name"])
+                    optionsList.add(options)
+                }
+
+                // Go back to main thread and add markers to the map
+                launch(Dispatchers.Main){
+                    val optionsListIterator = optionsList.iterator()
+                    while(optionsListIterator.hasNext()) {
+                        val trailOptions = optionsListIterator.next()
+                        mMap.addMarker(trailOptions)
+                    }
+                }
+            }
+        } catch (e:IOException) {
+            e.printStackTrace()
+        }
     }
 
     private fun getCurrentLocation() {
@@ -103,4 +145,63 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
+    private fun downloadUrl(string: String): String {
+        // Create URL from string
+        val url: URL = URL(string)
+        val inputStream: InputStream
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connect()
+
+        inputStream = connection.inputStream
+
+        // Convert input stream to string
+        return inputStream.bufferedReader().use(BufferedReader::readText)
+    }
 }
+
+class JsonParser {
+    private fun parseJsonObject(jsonObj: JSONObject): HashMap<String, String> {
+        var result = HashMap<String, String>()
+
+        try {
+            // Extract name, longitude, and latitude from response
+            var name = jsonObj.getString("name")
+            var lat = jsonObj.getJSONObject("geometry").getJSONObject("location").getString("lat")
+            var long = jsonObj.getJSONObject("geometry").getJSONObject("location").getString("lng")
+            result["name"] = name
+            result["lat"] = lat
+            result["long"] = long
+        } catch (e:Exception) {
+            e.printStackTrace()
+        }
+
+        return result
+    }
+
+    private fun parseJsonArray(jsonArray: JSONArray): List<HashMap<String, String>> {
+        var result = ArrayList<HashMap<String, String>>()
+        for (i in 0..jsonArray.length()) {
+            try {
+                var data = parseJsonObject(jsonArray.get(i) as JSONObject)
+                result.add(data)
+            } catch (e:Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        return result
+    }
+
+    fun parseResponse(jsonObj: JSONObject): List<HashMap<String, String>> {
+        var jsonArray = JSONArray()
+        try {
+            jsonArray = jsonObj.getJSONArray("results")
+        } catch (e:Exception) {
+            e.printStackTrace()
+        }
+
+        return parseJsonArray(jsonArray)
+    }
+}
+
