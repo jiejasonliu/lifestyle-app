@@ -16,17 +16,15 @@ import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.lifestyle.extensions.*
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.*
-import org.json.JSONArray
-import java.util.HashMap
+import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
 
-
-class HikingActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope by MainScope() {
+class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityHikingBinding
     private lateinit var client: FusedLocationProviderClient
@@ -67,43 +65,40 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope b
         mMap.addMarker(options)
 
         // Create URL to find hiking trails near device location
-        var stringUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=hiking_trail&location=" +
-                loc.latitude + "," + loc.longitude +
-                "&radius=5000&types=tourist_attraction&sensor=true&key=" +
-                resources.getString(R.string.google_maps_key)
+        var stringUrl =
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=hiking_trail&location=" +
+                    loc.latitude + "," + loc.longitude +
+                    "&radius=5000&types=tourist_attraction&sensor=true&key=" +
+                    resources.getString(R.string.google_maps_key)
 
         // Download json data from URL
         try {
             // Get trail head locations on a new thread
-            launch(Dispatchers.IO) {
+            CoroutineScope(Dispatchers.IO).launch {
                 // Call Google Places API
                 val data = downloadUrl(stringUrl)
 
                 // Parse the response
-                val jsonParser = JsonParser()
-                val response = jsonParser.parseResponse(JSONObject(data))
+                val response = parseHikingResponse(JSONObject(data))
 
                 // Go through each item from the response and create a list of map markers
-                val responseIterator = response.iterator()
-                val optionsList = ArrayList<MarkerOptions>()
-                while(responseIterator.hasNext()) {
-                    val trail = responseIterator.next()
+                val optionsList = arrayListOf<MarkerOptions>()
+                response.forEach { trail ->
                     latlng = LatLng(trail["lat"]!!.toDouble(), trail["long"]!!.toDouble())
-                    options = MarkerOptions().position(latlng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)) as MarkerOptions
+                    options = MarkerOptions().position(latlng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)) as MarkerOptions
                     options.title(trail["name"])
                     optionsList.add(options)
                 }
 
                 // Go back to main thread and add markers to the map
-                launch(Dispatchers.Main){
-                    val optionsListIterator = optionsList.iterator()
-                    while(optionsListIterator.hasNext()) {
-                        val trailOptions = optionsListIterator.next()
-                        mMap.addMarker(trailOptions)
+                withContext(Dispatchers.Main) {
+                    optionsList.forEach { option ->
+                        mMap.addMarker(option)
                     }
                 }
             }
-        } catch (e:IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
         }
     }
@@ -119,12 +114,16 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope b
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // If no permission, ask permission and override onRequestPermissionResult callback
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
             return
-        }
-        else {
+        } else {
             // If yes permission, wait for map to ready and goto onMapReady callback
-            client.lastLocation.addOnSuccessListener { location -> if (location != null) {
+            client.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
                     loc = location
                     mapFragment.getMapAsync(this)
                 }
@@ -158,50 +157,23 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope b
         // Convert input stream to string
         return inputStream.bufferedReader().use(BufferedReader::readText)
     }
-}
 
-class JsonParser {
-    private fun parseJsonObject(jsonObj: JSONObject): HashMap<String, String> {
-        var result = HashMap<String, String>()
+    @Throws(JSONException::class)
+    private fun parseHikingResponse(data: JSONObject): List<Map<String, String>> {
+        val results = mutableListOf<Map<String, String>>()
+        val trails = data.getJSONArray("results")
 
-        try {
-            // Extract name, longitude, and latitude from response
-            var name = jsonObj.getString("name")
-            var lat = jsonObj.getJSONObject("geometry").getJSONObject("location").getString("lat")
-            var long = jsonObj.getJSONObject("geometry").getJSONObject("location").getString("lng")
-            result["name"] = name
-            result["lat"] = lat
-            result["long"] = long
-        } catch (e:Exception) {
-            e.printStackTrace()
+        trails.forEach { jsonObj ->
+            var map = mutableMapOf<String, String>()
+
+            map["name"] = jsonObj.getString("name")
+            var loc = jsonObj.getJSONObject("geometry").getJSONObject("location")
+            map["lat"] = loc.getString("lat")
+            map["long"] = loc.getString("lng")
+
+            results.add(map)
         }
 
-        return result
-    }
-
-    private fun parseJsonArray(jsonArray: JSONArray): List<HashMap<String, String>> {
-        var result = ArrayList<HashMap<String, String>>()
-        for (i in 0..jsonArray.length()) {
-            try {
-                var data = parseJsonObject(jsonArray.get(i) as JSONObject)
-                result.add(data)
-            } catch (e:Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        return result
-    }
-
-    fun parseResponse(jsonObj: JSONObject): List<HashMap<String, String>> {
-        var jsonArray = JSONArray()
-        try {
-            jsonArray = jsonObj.getJSONArray("results")
-        } catch (e:Exception) {
-            e.printStackTrace()
-        }
-
-        return parseJsonArray(jsonArray)
+        return results
     }
 }
-
