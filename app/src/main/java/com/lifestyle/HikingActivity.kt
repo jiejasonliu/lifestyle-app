@@ -11,8 +11,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.lifestyle.databinding.ActivityHikingBinding
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
+import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -31,6 +35,12 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var latlng: LatLng
     private lateinit var loc: Location
+
+    companion object {
+        const val ACCESS_FINE_LOC = Manifest.permission.ACCESS_FINE_LOCATION
+        const val ACCESS_COARSE_LOC = Manifest.permission.ACCESS_COARSE_LOCATION
+        const val PERM_GRANTED = PackageManager.PERMISSION_GRANTED
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,32 +113,39 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun hasLocationPermissions(): Boolean {
+        return ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOC) == PERM_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOC) == PERM_GRANTED
+    }
+
+    @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
+        // check if device has location enabled; if not, show a toast
+        val lm: LocationManager? =
+            applicationContext.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        if (lm != null && !lm.isLocationEnabled) {
+            Toast.makeText(
+                applicationContext,
+                "Error: Location Services must be enabled!",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
         // Check if device has permission for device location
-        var task = if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // If no permission, ask permission and override onRequestPermissionResult callback
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
-            return
-        } else {
-            // If yes permission, wait for map to ready and goto onMapReady callback
-            client.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    loc = location
-                    mapFragment.getMapAsync(this)
+        var task =
+            if (!hasLocationPermissions()) {
+                // If no permission, ask permission and override onRequestPermissionResult callback
+                ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOC), 1)
+                return
+            } else {
+                // If yes permission, wait for map to ready and goto onMapReady callback
+                client.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        loc = location
+                        mapFragment.getMapAsync(this)
+                    }
                 }
             }
-        }
     }
 
     override fun onRequestPermissionsResult(
