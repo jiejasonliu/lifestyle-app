@@ -16,10 +16,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.lifestyle.extensions.*
 import java.io.*
 import java.net.HttpURLConnection
@@ -138,8 +142,21 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
                 ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOC), 1)
                 return
             } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Searching For Nearby Hiking Trails",
+                    Toast.LENGTH_LONG
+                ).show()
                 // If yes permission, wait for map to ready and goto onMapReady callback
-                client.lastLocation.addOnSuccessListener { location ->
+                client.getCurrentLocation(LocationRequest.QUALITY_HIGH_ACCURACY, object : CancellationToken() {
+                    override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
+                        return CancellationTokenSource().token
+                    }
+
+                    override fun isCancellationRequested(): Boolean {
+                        return false
+                    }
+                }).addOnSuccessListener { location ->
                     if (location != null) {
                         loc = location
                         mapFragment.getMapAsync(this)
