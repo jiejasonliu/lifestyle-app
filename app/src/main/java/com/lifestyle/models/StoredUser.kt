@@ -7,7 +7,7 @@ import com.lifestyle.interfaces.IUserProfile
 /**
  * @param _username this must be unique for each user; used as a key to the user's SharedPreference
  */
-class StoredUser (private val appContext: Context, private val _username: String) : IUserProfile {
+class StoredUser(private val appContext: Context, private val _username: String) : IUserProfile {
 
     private val sharedPreferences: SharedPreferences =
         appContext.getSharedPreferences(_username, Context.MODE_PRIVATE)
@@ -21,39 +21,39 @@ class StoredUser (private val appContext: Context, private val _username: String
         }
     }
 
-    // username should not be able to be modified
+    // note: username should not be able to be modified
     override val username: String = sharedPreferences.getString("username", null) ?: "<error>"
 
     override var fullName: String
-        get() = sharedPreferences.getString("fullName", null) ?: ""
+        get() = sharedPreferences.getString("fullName", null) ?: "<error>"
         set(v) = putStringAsync("fullName", v)
 
-    override var age: Int
-        get() = sharedPreferences.getInt("age", 0)
+    override var age: Int?
+        get() = getNullableInt(sharedPreferences.getInt("age", -1), -1)
         set(v) = putIntAsync("age", v)
 
-    override var city: String
-        get() = sharedPreferences.getString("city", null) ?: ""
+    override var city: String?
+        get() = sharedPreferences.getString("city", null)
         set(v) = putStringAsync("city", v)
 
-    override var state: String
-        get() = sharedPreferences.getString("state", null) ?: ""
+    override var state: String?
+        get() = sharedPreferences.getString("state", null)
         set(v) = putStringAsync("state", v)
 
-    override var country: String
-        get() = sharedPreferences.getString("country", null) ?: ""
+    override var country: String?
+        get() = sharedPreferences.getString("country", null)
         set(v) = putStringAsync("country", v)
 
-    override var height: Int
-        get() = sharedPreferences.getInt("height", 0)
+    override var height: Int?
+        get() = getNullableInt(sharedPreferences.getInt("height", -1), -1)
         set(v) = putIntAsync("height", v)
 
-    override var weight: Int
-        get() = sharedPreferences.getInt("weight", 0)
+    override var weight: Int?
+        get() = getNullableInt(sharedPreferences.getInt("height", -1), -1)
         set(v) = putIntAsync("weight", v)
 
-    override var sex: String
-        get() = sharedPreferences.getString("sex", null) ?: ""
+    override var sex: String?
+        get() = sharedPreferences.getString("sex", null)
         set(v) = putStringAsync("sex", v)
 
     override var pictureURI: String?
@@ -62,33 +62,52 @@ class StoredUser (private val appContext: Context, private val _username: String
             if (v != null) putStringAsync("pictureURI", v)
         }
 
+    private fun getNullableInt(int: Int, sentinelValue: Int): Int? {
+        if (int == sentinelValue)
+            return null
+        return sentinelValue
+    }
+
+    private fun putIntSynchronous(key: String, value: Int?): Boolean {
+        if (value == null)
+            return false
+
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        return editor.commit() // immediately write to disk
+    }
+
+    private fun putStringSynchronous(key: String, value: String?): Boolean {
+        if (value == null)
+            return false
+
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        return editor.commit() // immediately write to disk
+    }
+
     /////////////////////////////////////////////////////////////////////////
     // calling these async functions will cause a write-defer (write-back) //
     // in other words, affects memory but not disk until OS has resources. //
     /////////////////////////////////////////////////////////////////////////
 
-    private fun putIntAsync(key: String, value: Int) {
+    private fun putIntAsync(key: String, value: Int?) {
+        if (value == null)
+            return
+
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
         editor.apply()
+
     }
 
-    private fun putStringAsync(key: String, value: String) {
+    private fun putStringAsync(key: String, value: String?) {
+        if (value == null)
+            return
+
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
         editor.apply()
-    }
-
-    private fun putIntSynchronous(key: String, value: Int): Boolean {
-        val editor = sharedPreferences.edit()
-        editor.putInt(key, value)
-        return editor.commit() // immediately write to disk
-    }
-
-    private fun putStringSynchronous(key: String, value: String): Boolean {
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        return editor.commit() // immediately write to disk
     }
 }
 

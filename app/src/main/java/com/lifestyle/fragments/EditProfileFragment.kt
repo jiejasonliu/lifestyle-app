@@ -118,57 +118,46 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         // the purpose here is to validate things that aren't possible via XML
 
         // username pass
-        if (getText(textLayoutUsername).length < 6)
+        val textUsername = getText(textLayoutUsername)
+        if (textUsername == null)
+            return withErr(textLayoutUsername.hint, "Must not be empty")
+        else if (textUsername.length < 6)
             return withErr(textLayoutUsername.hint, "Too short")
 
         // full name pass
-        if (getText(textLayoutFullName).length < 6)
+        val textFullName = getText(textLayoutFullName)
+        if (textFullName == null)
+            return withErr(textLayoutFullName.hint, "Must not be empty")
+        else if (textFullName.length < 6)
             return withErr(textLayoutFullName.hint, "Too short")
 
-        // age pass
-        if (getText(textLayoutAge).isNullOrBlank())
-            return withErr(textLayoutAge.hint, "Invalid number")
-
-        // city pass
-        if (getText(textLayoutCity).isNullOrBlank())
-            return withErr(textLayoutCity.hint, "Must not be empty")
-
-        // state pass
-        if (getText(textLayoutState).isNullOrBlank())
-            return withErr(textLayoutState.hint, "Must not be empty")
-
-        // country pass
-        if (getText(textLayoutCountry).isNullOrBlank())
-            return withErr(textLayoutCountry.hint, "Must not be empty")
-
-        // sex pass
-        if (getText(textLayoutSex).isNullOrBlank())
-            return withErr(textLayoutSex.hint, "Must not be empty")
-
         // weight pass
-        if (getText(textLayoutWeight).isNullOrBlank())
-            return withErr(textLayoutWeight.hint, "Must not be empty")
-        else if (getText(textLayoutWeight).toInt() < 1)
-            return withErr(textLayoutWeight.hint, "Must be greater than 1")
+        val textWeight = getText(textLayoutWeight)
+        if (textWeight != null) {
+            if (textWeight.toInt() < 1)
+                return withErr(textLayoutWeight.hint, "Must be greater than 1")
+        }
 
         // height pass
         // ft.
-        if (getText(textLayoutHeightFt).isNullOrBlank())
-            return withErr(textLayoutHeightFt.hint, "Must not be empty")
-        else if (getText(textLayoutHeightFt).toInt() < 0 || getText(textLayoutHeightFt).toInt() > 11)
-            return withErr(textLayoutHeightFt.hint, "Must be between 0-11")
+        val textHeightFt = getText(textLayoutHeightFt)
+        if (textHeightFt != null) {    // validate only if it has contents
+            if (textHeightFt.toInt() < 0 || textHeightFt.toInt() > 11)
+                return withErr(textLayoutHeightFt.hint, "Must be between 0-11")
+        }
 
         // in.
-        if (getText(textLayoutHeightIn).isNullOrBlank())
-            return withErr(textLayoutHeightIn.hint, "Must not be empty")
-        else if (getText(textLayoutHeightIn).toInt() < 0 || getText(textLayoutHeightIn).toInt() > 11)
-            return withErr(textLayoutHeightIn.hint, "Must be between 0-11")
+        val textHeightIn = getText(textLayoutHeightIn)
+        if (textHeightIn != null) {    // validate only if it has contents
+            if (textHeightIn.toInt() < 0 || textHeightIn.toInt() > 11)
+                return withErr(textLayoutHeightIn.hint, "Must be between 0-11")
+        }
 
         if (context == null)
             return withErr("Lifestyle", "Something went wrong")
 
         // create user in model storage
-        val username: String = getText(textLayoutUsername)
+        val username: String = getText(textLayoutUsername)!! // username must be filled
         val user = StoredUser(requireContext(), username)
         writeToStoredUser(user)
 
@@ -178,8 +167,15 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun getText(layout: TextInputLayout?): String {
-        return layout?.editText?.text?.toString()?.trim() ?: ""
+    /**
+     * @return the text; or null if the text is empty/blank
+     */
+    private fun getText(layout: TextInputLayout?): String? {
+        val result = layout?.editText?.text?.toString()?.trim()
+        if (result != null && (!result.isNullOrBlank()))
+            return result
+
+        return null
     }
 
     private fun withErr(atViewName: String, errorDetails: String): EditProfileResult {
@@ -199,17 +195,22 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     }
 
     private fun writeToStoredUser(user: StoredUser) {
-        val username: String = getText(textLayoutUsername)
-        val fullName: String = getText(textLayoutFullName)
-        val age: Int = getText(textLayoutAge).toInt()
-        val city: String = getText(textLayoutCity)
-        val state: String = getText(textLayoutState)
-        val country: String = getText(textLayoutCountry)
-        val sex: String = getText(textLayoutSex)
-        val weight: Int = getText(textLayoutWeight).toInt()
-        val height: Int =
-            (12 * getText(textLayoutHeightFt).toInt()) + getText(textLayoutHeightIn).toInt()
+        val fullName: String = getText(textLayoutFullName)!!    // full name must be filled
+        val age: Int? = getText(textLayoutAge)?.toInt()
+        val city: String? = getText(textLayoutCity)
+        val state: String? = getText(textLayoutState)
+        val country: String? = getText(textLayoutCountry)
+        val sex: String? = getText(textLayoutSex)
+        val weight: Int? = getText(textLayoutWeight)?.toInt()
 
+        val heightFt: Int? = getText(textLayoutHeightFt)?.toInt()
+        val heightIn: Int? = getText(textLayoutHeightIn)?.toInt()
+        var height: Int? = null
+        if (heightFt != null && heightIn != null) {
+            height = (12 * heightFt) + heightIn
+        }
+
+        // setters are a no-op if field is null
         user.fullName = fullName
         user.age = age
         user.city = city
@@ -218,7 +219,6 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         user.sex = sex
         user.weight = weight
         user.height = height
-
-        user.pictureURI = pictureURI    // null <> default image
+        user.pictureURI = pictureURI
     }
 }
