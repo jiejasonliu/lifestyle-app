@@ -18,7 +18,7 @@
         <LinearLayout
             android:id="@+id/linearLayoutPfpContainer"
             android:layout_width="match_parent"
-            android:layout_height="128dp"
+            android:layout_height="112dp"
             android:background="@drawable/dashboard_background"
 
             android:gravity="center"
@@ -92,6 +92,7 @@
                 android:layout_weight="0.66"
                 android:hint="@string/full_name"
                 app:endIconMode="clear_text"
+                app:helperText="@string/required_helperText"
                 app:startIconDrawable="@drawable/ic_profile_24"
                 app:startIconTint="@color/orange_800">
 

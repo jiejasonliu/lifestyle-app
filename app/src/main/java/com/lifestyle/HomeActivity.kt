@@ -1,17 +1,17 @@
 package com.lifestyle
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
-import com.lifestyle.helpers.ExternalStorageSaver
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
+import kotlin.math.min
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewProfile: CardView
@@ -21,14 +21,19 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewSettings: CardView
     private lateinit var cardViewLogout: CardView
     private lateinit var imageViewProfilePicture: ImageView
+    private lateinit var textViewMyDashboard: TextView
 
-    private var user: StoredUser? = null    // initialized in onCreate()
+    private var optionalUser: StoredUser? = null    // initialized in onCreate
+
+    companion object {
+        const val DASHBOARD_TRUNCATE_LEN = 12
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        user = LoginSession.getInstance(this).getLoggedInUser()
+        optionalUser = LoginSession.getInstance(this).getLoggedInUser()
 
         // populate late init
         cardViewProfile = findViewById(R.id.cardViewProfile)
@@ -38,7 +43,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewSettings = findViewById(R.id.cardViewSettings)
         cardViewLogout = findViewById(R.id.cardViewLogout)
         imageViewProfilePicture = findViewById(R.id.imageViewProfilePicture)
-        user = LoginSession.getInstance(this).getLoggedInUser()
+        textViewMyDashboard = findViewById(R.id.textViewMyDashboard)
 
         // bind listeners
         cardViewProfile.setOnClickListener(this)
@@ -48,13 +53,19 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewSettings.setOnClickListener(this)
         cardViewLogout.setOnClickListener(this)
 
-        // todo: we can change StoredUser? -> StoredUser if we disallow this page unless logged in
-        if (user?.pictureURI != null) {
-            val uri: Uri = user!!.pictureURI!!.toUri()
-            imageViewProfilePicture.setImageURI(uri)
-        }
-        else {
-            imageViewProfilePicture.setImageResource(R.drawable.default_pp)
+        // fill in optional data
+        if (optionalUser != null) {
+            val user = optionalUser!!
+
+            // set full name
+            if (user.fullName != null) {
+                textViewMyDashboard.text = "Welcome, ${user.fullName}"
+            }
+
+            // set custom pfp
+            if (user.pictureURI != null) {
+                imageViewProfilePicture.setImageURI(user.pictureURI!!.toUri())
+            }
         }
     }
 
