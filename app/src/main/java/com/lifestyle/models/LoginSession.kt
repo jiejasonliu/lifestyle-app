@@ -7,7 +7,7 @@ class LoginSession private constructor(private val appContext: Context) {
 
     companion object Factory {
         const val SHARED_PREF_NAME = "lifestyle_login_session"  // key => SharedPreference
-        const val SESSION_USERNAME = "session_state"           // SP key => user who is logged in
+        const val SESSION_USERNAME_KEY = "session_state"       // SP key => user who is logged in
         const val LOGGED_OUT_VALUE = "#LOGGED-OUT#"           // value for session_state if no login
 
         private var instance: LoginSession? = null
@@ -24,7 +24,7 @@ class LoginSession private constructor(private val appContext: Context) {
 
     fun getLoggedInUser(): StoredUser? {
         if (isLoggedIn()) {
-            val username = getSharedPreferences().getString(SESSION_USERNAME, null)
+            val username = getSharedPreferences().getString(SESSION_USERNAME_KEY, null)
             if (username != null)
                 return StoredUser(appContext, username)
         }
@@ -32,19 +32,19 @@ class LoginSession private constructor(private val appContext: Context) {
     }
 
     fun isLoggedIn(): Boolean {
-        return getSharedPreferences().getString(SESSION_USERNAME, null) != LOGGED_OUT_VALUE &&
-                !getSharedPreferences().getString(SESSION_USERNAME, null).isNullOrBlank()
+        return getSharedPreferences().getString(SESSION_USERNAME_KEY, null) != LOGGED_OUT_VALUE &&
+                !getSharedPreferences().getString(SESSION_USERNAME_KEY, null).isNullOrBlank()
     }
 
     fun login(username: String) {
         val editor = getSharedPreferences().edit()
-        editor.putString(SESSION_USERNAME, username)
+        editor.putString(SESSION_USERNAME_KEY, username)
         editor.apply()
     }
 
     fun logout() {
         val editor = getSharedPreferences().edit()
-        editor.putString(SESSION_USERNAME, LOGGED_OUT_VALUE)
+        editor.putString(SESSION_USERNAME_KEY, LOGGED_OUT_VALUE)
         editor.apply()
     }
 

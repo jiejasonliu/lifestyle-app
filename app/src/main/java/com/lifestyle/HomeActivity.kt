@@ -11,7 +11,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
-import kotlin.math.min
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cardViewProfile: CardView
@@ -24,10 +23,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var textViewMyDashboard: TextView
 
     private var optionalUser: StoredUser? = null    // initialized in onCreate
-
-    companion object {
-        const val DASHBOARD_TRUNCATE_LEN = 12
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,8 +89,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.cardViewLogout -> {
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
+
                 LoginSession.getInstance(applicationContext).logout()
                 finish()
+                startActivity(Intent(this, MainActivity::class.java))
             }
         }
     }
