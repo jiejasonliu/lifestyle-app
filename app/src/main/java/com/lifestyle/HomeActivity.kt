@@ -72,6 +72,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.cardViewBmi -> {
                 Toast.makeText(this, "BMI Calculator Clicked", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, BMIActivity::class.java))
             }
 
             R.id.cardViewHiking -> {
