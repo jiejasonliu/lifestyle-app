@@ -49,7 +49,7 @@ class StoredUser(private val appContext: Context, private val _username: String)
         set(v) = putIntAsync("height", v)
 
     override var weight: Int?
-        get() = getNullableInt(sharedPreferences.getInt("height", -1), -1)
+        get() = getNullableInt(sharedPreferences.getInt("weight", -1), -1)
         set(v) = putIntAsync("weight", v)
 
     override var sex: String?
@@ -62,28 +62,27 @@ class StoredUser(private val appContext: Context, private val _username: String)
             if (v != null) putStringAsync("pictureURI", v)
         }
 
-    private fun getNullableInt(int: Int, sentinelValue: Int): Int? {
-        if (int == sentinelValue)
+    private fun getNullableInt(value: Int, sentinelValue: Int): Int? {
+        if (value == sentinelValue)
             return null
-        return sentinelValue
+        return value
     }
 
     private fun putIntSynchronous(key: String, value: Int?): Boolean {
-        if (value == null)
-            return false
-
         val editor = sharedPreferences.edit()
+        if (value == null) {
+            editor.remove(key)
+            return editor.commit()
+        }
+
         editor.putInt(key, value)
         return editor.commit() // immediately write to disk
     }
 
     private fun putStringSynchronous(key: String, value: String?): Boolean {
-        if (value == null)
-            return false
-
         val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        return editor.commit() // immediately write to disk
+        editor.putString(key, value)    // if value == null, same as remove(key)
+        return editor.commit()          // immediately write to disk
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -92,21 +91,20 @@ class StoredUser(private val appContext: Context, private val _username: String)
     /////////////////////////////////////////////////////////////////////////
 
     private fun putIntAsync(key: String, value: Int?) {
-        if (value == null)
-            return
-
         val editor = sharedPreferences.edit()
+        if (value == null) {
+            editor.remove(key)
+            editor.apply()
+            return
+        }
+
         editor.putInt(key, value)
         editor.apply()
-
     }
 
     private fun putStringAsync(key: String, value: String?) {
-        if (value == null)
-            return
-
         val editor = sharedPreferences.edit()
-        editor.putString(key, value)
+        editor.putString(key, value)    // if value == null, same as remove(key)
         editor.apply()
     }
 }

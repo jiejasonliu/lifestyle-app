@@ -4,48 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupActivity">
-
-<!--    <View-->
-<!--        android:id="@+id/pfpSignupSeparator"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:background="@color/grey"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/linearLayoutPfpContainer"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/scrollViewEditProfileSignup"/>-->
+    tools:context=".ProfileActivity"
+    android:background="@color/orange_50">
 
     <ScrollView
-        android:id="@+id/scrollViewEditProfileSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/orange_50"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <fragment
-                android:id="@+id/fragmentEditProfileSignup"
+                android:id="@+id/fragmentEditProfile"
                 android:name="com.lifestyle.fragments.EditProfileFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <Button
-                android:id="@+id/buttonFinishSignup"
-                android:layout_width="200dp"
+                android:id="@+id/buttonApplyChanges"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/finishSignup"
+                android:layout_marginVertical="8dp"
+                android:text="@string/applyChanges"
                 android:textStyle="bold" />
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="125dp" />
         </LinearLayout>
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

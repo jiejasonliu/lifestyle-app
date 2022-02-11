@@ -70,7 +70,7 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
             if(!user.sex.isNullOrBlank())
                 usersSex = user.sex!!
 
-            if(user.age == null)
+            if(user.age != null)
                 usersAge = user.age!!
 
         //    if(user.weight != null)
