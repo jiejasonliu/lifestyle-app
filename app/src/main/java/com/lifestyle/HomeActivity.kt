@@ -81,7 +81,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.cardViewProfile -> {
-                Toast.makeText(this, "Profile Clicked", Toast.LENGTH_SHORT).show()
+                if (!LoginSession.getInstance(this).isLoggedIn()) {
+                    Toast.makeText(this, "User must be logged in", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
                 startActivity(Intent(this, ProfileActivity::class.java))
             }
 

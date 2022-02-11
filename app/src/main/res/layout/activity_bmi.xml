@@ -2,318 +2,311 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Height"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            android:layout_marginTop="8dp"
-            />
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical">
 
-            <!-- height (feet/ft) -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutHeightFt"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_weight="0.5"
-                android:hint="@string/height_feet"
-                app:suffixText="@string/height_ft">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextHeightFt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="@integer/max_height_ft_length" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- height (inches/in) -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutHeightIn"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_weight="0.5"
-                android:hint="@string/height_inches"
-                app:suffixText="@string/height_in">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textInputEditTextHeightIn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="@integer/max_height_ft_length" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Weight"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            android:layout_marginTop="8dp"
-            />
-
-        <!-- weight -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayoutWeight"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:hint="@string/weight_detailed"
-            app:startIconDrawable="@drawable/ic_weight_24"
-            app:startIconTint="@color/orange_800"
-            app:suffixText="@string/weight_lbs"
-            >
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputEditTextWeight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inputType="number"
-                android:maxLength="@integer/max_weight_length"
-                android:gravity="center"
-                android:layout_marginLeft="100dp"
-                android:layout_marginRight="100dp"
-
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="right">
-
-            <Button
-                android:id="@+id/buttonUpdate"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/update"
+                android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="16dp"
-                >
+                android:text="Height"
+                android:textSize="20dp" />
 
-            </Button>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="30dp"
-            android:text="Goal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/dashboard_background"
-            >
-
-        </TextView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <Button
-                android:id="@+id/buttonLoseWeight"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".33"
-                android:layout_margin="5dp"
-                android:text="Lose Weight"
-                android:backgroundTint="@drawable/colored_button">
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="30dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            </Button>
+                <!-- height (feet/ft) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutHeightFt"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="0.5"
+                    android:hint="@string/height_feet"
+                    app:suffixText="@string/height_ft">
 
-            <Button
-                android:id="@+id/buttonMaintainWeight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".33"
-                android:layout_margin="5dp"
-                android:text="Maintain Weight"
-                android:backgroundTint="@drawable/colored_button">
-            </Button>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditTextHeightFt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="@integer/max_height_ft_length" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/buttonGainWeight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".33"
-                android:layout_margin="5dp"
-                android:text="Gain Weight"
-                android:backgroundTint="@drawable/colored_button">
+                <!-- height (inches/in) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayoutHeightIn"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="0.5"
+                    android:hint="@string/height_inches"
+                    app:suffixText="@string/height_in">
 
-            </Button>
-        </LinearLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditTextHeightIn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="@integer/max_height_ft_length" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <Button
-                android:id="@+id/buttonNotActive"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:layout_margin="5dp"
-                android:text="I am not Active"
-                android:backgroundTint="@drawable/colored_button">
-            </Button>
-
-            <Button
-                android:id="@+id/buttonActive"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:layout_margin="5dp"
-                android:text="I am active"
-                android:backgroundTint="@drawable/colored_button">
-            </Button>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:padding="16dp">
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/textViewLoseOrGain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="Weight"
+                android:textSize="20dp" />
+
+            <!-- weight -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutWeight"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:hint="@string/weight_detailed"
+                app:startIconDrawable="@drawable/ic_weight_24"
+                app:startIconTint="@color/orange_800"
+                app:suffixText="@string/weight_lbs">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditTextWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="100dp"
+                    android:layout_marginRight="100dp"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="@integer/max_weight_length"
+
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right">
+
+                <Button
+                    android:id="@+id/buttonUpdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/update">
+
+                </Button>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:background="@drawable/dashboard_background"
+                android:gravity="center"
+                android:text="Goal"
                 android:textSize="30dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="I want to gain :"
-                android:layout_weight="3"
-                android:layout_gravity="center">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
             </TextView>
 
-            <EditText
-                android:id="@+id/editTextWeightChange"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:text="0"
-                android:textSize="23dp"
-                android:layout_marginRight="20dp"
-                android:inputType="number"
-                android:maxLength="1"/>
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="0dp"
+                <Button
+                    android:id="@+id/buttonLoseWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".33"
+                    android:backgroundTint="@drawable/colored_button"
+                    android:text="Lose Weight">
+
+                </Button>
+
+                <Button
+                    android:id="@+id/buttonMaintainWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".33"
+                    android:backgroundTint="@drawable/colored_button"
+                    android:text="Maintain Weight"></Button>
+
+                <Button
+                    android:id="@+id/buttonGainWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".33"
+                    android:backgroundTint="@drawable/colored_button"
+                    android:text="Gain Weight">
+
+                </Button>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="lbs/week"
-                android:textSize="23dp"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                >
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
 
-            </TextView>
+                <Button
+                    android:id="@+id/buttonNotActive"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
+                    android:backgroundTint="@drawable/colored_button"
+                    android:text="I am not Active"></Button>
 
+                <Button
+                    android:id="@+id/buttonActive"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
+                    android:backgroundTint="@drawable/colored_button"
+                    android:text="I am active"></Button>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/textViewLoseOrGain"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="3"
+                    android:text="I want to gain :"
+                    android:textSize="30dp">
+
+                </TextView>
+
+                <EditText
+                    android:id="@+id/editTextWeightChange"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:text="0"
+                    android:textSize="23dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="lbs/week"
+                    android:textSize="23dp">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:gravity="center"
+                    android:text="BMR:"
+                    android:textSize="25dp">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/textViewBMR"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:gravity="center"
+                    android:text="1000"
+                    android:textSize="25dp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:gravity="center"
+                    android:text="Target Calories:"
+                    android:textSize="25dp">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/textViewTargetCalories"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:gravity="center"
+                    android:text="1500"
+                    android:textSize="25dp" />
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="64dp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="BMR:"
-                android:layout_weight=".5"
-                android:textSize="25dp"
-                android:gravity="center"
-                >
-
-            </TextView>
-
-            <TextView
-                android:id="@+id/textViewBMR"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textSize="25dp"
-                android:text="1000"
-                android:gravity="center"
-                />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Target Calories:"
-                android:layout_weight=".5"
-                android:textSize="25dp"
-                android:gravity="center"
-                >
-
-            </TextView>
-
-            <TextView
-                android:id="@+id/textViewTargetCalories"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textSize="25dp"
-                android:text="1500"
-                android:gravity="center"
-                />
-
-
-        </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
