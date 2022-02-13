@@ -13,4 +13,5 @@ interface IUserProfile {
     val weight: Int?         // in lbs
     val sex: String?
     val pictureURI: String?
+    val weightChange: Int?
 }

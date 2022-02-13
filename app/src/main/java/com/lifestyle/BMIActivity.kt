@@ -1,9 +1,6 @@
 package com.lifestyle
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -14,7 +11,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 
-class BMIActivity : AppCompatActivity(), View.OnClickListener {
+class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener {
 
     private lateinit var textInputWeight: TextInputEditText
     private lateinit var textInputHeightFt: TextInputEditText
@@ -63,6 +60,10 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
         buttonActive.setOnClickListener(this)
         buttonNotActive.setOnClickListener(this)
 
+        // Register change listeners
+        editTextWeightChange.setOnFocusChangeListener(this);
+
+
         // Set height and weight from user's info
         if(optionalUser != null) {
             val user = optionalUser!!
@@ -73,29 +74,44 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
             if(user.age != null)
                 usersAge = user.age!!
 
-        //    if(user.weight != null)
-       //         textInputWeight.setText(user.weight!!)
+            if(user.weight != null)
+                textInputWeight.setText(user.weight!!.toString())
 
+            if(user.weightChange != null) {
+                val weightChange = user.weightChange!!
+                if(weightChange < 0) {
+                    editTextWeightChange.setText((weightChange * -1).toString())
+                    buttonLoseWeight.isSelected = true
+                    textViewLoseOrGain.setText("I want to lose")
+                }
+                else if(weightChange > 0) {
+                    editTextWeightChange.setText(weightChange.toString())
+                    buttonGainWeight.isSelected = true
+                    textViewLoseOrGain.setText("I want to gain")
+                }
+                else {
+                    buttonMaintainWeight.isSelected = true
+                }
+            } else {
+                buttonMaintainWeight.isSelected = true
+            }
 
             if(user.height != null) {
                 val feet = user.height?.div(12)
                 val inches = user.height?.mod(12)
 
-  //              textInputHeightFt.setText(feet.toString())
-  //              textInputHeightIn.setText(inches.toString())
+                textInputHeightFt.setText(feet.toString())
+                textInputHeightIn.setText(inches.toString())
 
                 // Set calculations if they have weight and height
-            //    if(user.weight != null)
-     //               updateCalculations()
+                if(user.weight != null)
+                    updateCalculations()
             }
+        } else {
+            // Default to maintain weight
+            buttonMaintainWeight.isSelected = true
         }
-
-        // Default to maintain weight
-        buttonMaintainWeight.isSelected = true
         buttonActive.isSelected = true
-
-        val actionBar = getActionBar()
-        actionBar?.setDisplayHomeAsUpEnabled(true);
     }
 
     override fun onClick(view: View?) {
@@ -167,11 +183,31 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
         if(buttonLoseWeight.isSelected)
             weightChange *= -1
 
+
+        // Update user profile
+        if(optionalUser != null) {
+            val user = StoredUser(this, optionalUser?.username.toString())
+            updateUser(user, weight, heightFt, heightIn, weightChange)
+        }
+
         if(usersSex.equals("F"))
             updateCaloriesForFemale(weight, heightFt, heightIn, usersAge, weightChange, isActive)
         else
             updateCaloriesForMale(weight, heightFt, heightIn, usersAge, weightChange, isActive)
     }
+
+    fun updateUser(user: StoredUser, weight: Int, heightFt:Int, heightIn: Int, weightChange: Int) {
+
+        var height: Int? = null
+        if (heightFt != null && heightIn != null) {
+            height = (12 * heightFt) + heightIn
+        }
+
+        user.weight = weight
+        user.height = height
+        user.weightChange = weightChange
+    }
+
 
     fun updateCaloriesForMale(weight: Int, heightFt: Int, heightIn: Int, age: Int, weightChange: Int, isActive: Boolean) {
         val weightInKG = .453592 * weight
@@ -186,11 +222,17 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
             var newBMR = (bmr * 1.55).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
+            if(newBMR < 1200)
+                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT)
+
         }
         else {
             val newBMR = (bmr * 1.2).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
+            if(newBMR < 1200)
+                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT)
+
         }
     }
 
@@ -205,17 +247,36 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener {
             val newBMR = (bmr * 1.55).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
+            if(newBMR < 1000)
+                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT)
         }
         else {
             val newBMR = (bmr * 1.2).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
-
+            if(newBMR < 1000)
+                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT)
         }
     }
 
     fun showErrorNullValue(value: String)
     {
         Toast.makeText(this, "Please fill in the " + value + " field.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onFocusChange(view: View?, hasFocus: Boolean) {
+        if(!hasFocus) {
+            when (view?.id) {
+                R.id.editTextWeightChange -> {
+                    if(editTextWeightChange.text.toString() != "0") {
+                        if(buttonMaintainWeight.isSelected)
+                            Toast.makeText(this, "Select gain or lose weight", Toast.LENGTH_SHORT)
+                        else
+                            updateCalculations()
+                    } else
+                        updateCalculations()
+                }
+            }
+        }
     }
 }
