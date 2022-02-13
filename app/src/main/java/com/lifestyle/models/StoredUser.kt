@@ -62,6 +62,12 @@ class StoredUser(private val appContext: Context, private val _username: String)
             if (v != null) putStringAsync("pictureURI", v)
         }
 
+    override var weightChange: Int?
+        get() = getNullableInt(sharedPreferences.getInt("weightChange", 0), 0)
+        set(v) {
+            if (v != null) putIntAsync("weightChange", v)
+        }
+
     private fun getNullableInt(value: Int, sentinelValue: Int): Int? {
         if (value == sentinelValue)
             return null
