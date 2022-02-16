@@ -25,7 +25,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
+        <activity
+            android:name=".WeatherActivity"
+            android:exported="false" />
         <activity
             android:name=".HikingActivity"
             android:exported="false"
