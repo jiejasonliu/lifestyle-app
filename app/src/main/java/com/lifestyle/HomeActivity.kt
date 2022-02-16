@@ -49,6 +49,20 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewLogout.setOnClickListener(this)
 
         // fill in optional data
+        fillWithUserData()
+    }
+
+    /**
+     * The HomeActivity can be changed on resume:
+     *  (1) outside source affecting image files
+     *  (2) from editing your profile (name, img, etc.)
+     */
+    override fun onResume() {
+        super.onResume()
+        fillWithUserData()  // refetch
+    }
+
+    private fun fillWithUserData() {
         if (optionalUser != null) {
             val user = optionalUser!!
 
@@ -67,11 +81,17 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.cardViewProfile -> {
-                Toast.makeText(this, "Profile Clicked", Toast.LENGTH_SHORT).show()
+                if (!LoginSession.getInstance(this).isLoggedIn()) {
+                    Toast.makeText(this, "User must be logged in", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                startActivity(Intent(this, ProfileActivity::class.java))
             }
 
             R.id.cardViewBmi -> {
                 Toast.makeText(this, "BMI Calculator Clicked", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, BMIActivity::class.java))
             }
 
             R.id.cardViewHiking -> {

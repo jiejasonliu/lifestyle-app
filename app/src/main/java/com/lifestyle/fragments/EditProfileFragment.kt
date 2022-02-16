@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.net.toUri
@@ -42,9 +43,12 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     private lateinit var textLayoutHeightFt: TextInputLayout
     private lateinit var textLayoutHeightIn: TextInputLayout
 
-    private var pictureURI: String? = null
-    private var ICON_WIDTH: Int = 100
-    private var ICON_HEIGHT: Int = 100
+    private var currentPictureUriString: String? = null
+
+    companion object {
+        const val ICON_WIDTH: Int = 128
+        const val ICON_HEIGHT: Int = 128
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,11 +101,11 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
 
                     // todo: maybe not save immediately? we don't know if the user will finish
                     //  unfortunately, this will require significant infrastructural changes
-                    val physicalUri =
+                    val physicalUriString =
                         ExternalStorageSaver.saveBitmap(bitmap, ICON_WIDTH, ICON_HEIGHT)
-                    if (physicalUri != null) {
-                        pictureURI = physicalUri
-                        profileImageView.setImageURI(physicalUri.toUri())
+                    if (physicalUriString != null) {
+                        currentPictureUriString = physicalUriString
+                        profileImageView.setImageURI(physicalUriString.toUri())
                     }
                 }
             }
@@ -114,7 +118,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
      *          otherwise <T>.firstError will contain the first error found
      */
     fun aggregateFieldsAndWrite(): EditProfileResult? {
-        // note: field lengths are limited via @strings/... (strings.xml)
+        // note: field lengths are limited via values in @strings/... (strings.xml)
         // the purpose here is to validate things that aren't possible via XML
 
         // username pass
@@ -153,6 +157,14 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
                 return withErr(textLayoutHeightIn.hint, "Must be between 0-11")
         }
 
+        // if one is filled, the other should be also filled
+        if ((textHeightFt != null) xor (textHeightIn != null)) {
+            return if (textHeightFt == null)
+                withErr(textLayoutHeightFt.hint, "Don't leave feet blank if inches is filled")
+            else
+                withErr(textLayoutHeightIn.hint, "Don't leave inches blank if feet is filled")
+        }
+
         if (context == null)
             return withErr("Lifestyle", "Something went wrong")
 
@@ -166,6 +178,50 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
             userProfile = user
         )
     }
+
+    /**
+     * Fill fragment text fields with applicable data from a StoredUser instance.
+     */
+    fun fillProfileFields(user: StoredUser) {
+        fun EditText.setIfExists(str: String?) {
+            if (!str.isNullOrBlank())
+                this.setText(str)
+        }
+        fun EditText.setIfExists(int: Int?) {
+            if (int != null)
+                this.setText(int.toString())
+        }
+
+        if (user.pictureURI != null) {
+            currentPictureUriString = user.pictureURI
+            profileImageView.setImageURI(user.pictureURI!!.toUri())
+        }
+
+        textLayoutUsername.editText?.setIfExists(user.username)
+        textLayoutFullName.editText?.setIfExists(user.fullName)
+        textLayoutAge.editText?.setIfExists(user.age)
+        textLayoutCity.editText?.setIfExists(user.city)
+        textLayoutState.editText?.setIfExists(user.state)
+        textLayoutCountry.editText?.setIfExists(user.country)
+        textLayoutSex.editText?.setIfExists(user.sex)
+        textLayoutWeight.editText?.setIfExists(user.weight)
+
+        if (user.height != null) {
+            val feet = user.height?.div(12)
+            val inches = user.height?.mod(12)
+            textLayoutHeightFt.editText?.setIfExists(feet)
+            textLayoutHeightIn.editText?.setIfExists(inches)
+        }
+    }
+
+    /**
+     * After signup, some fields (e.g. username) should not be able to be changed.
+     */
+    fun disableImmutableFields() {
+        textLayoutUsername.isEnabled = false
+        textLayoutUsername.helperText = "Cannot be changed after signup"
+    }
+
 
     /**
      * @return the text; or null if the text is empty/blank
@@ -219,6 +275,6 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         user.sex = sex
         user.weight = weight
         user.height = height
-        user.pictureURI = pictureURI
+        user.pictureURI = currentPictureUriString
     }
 }

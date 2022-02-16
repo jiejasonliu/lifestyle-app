@@ -29,4 +29,7 @@
     <string name="weight_detailed">Weight (lbs)</string>
     <string name="weight_lbs">lbs</string>
     <string name="sex">Sex</string>
+
+    <string name="update">Update</string>
+    <string name="applyChanges">Apply Changes</string>
 </resources>
