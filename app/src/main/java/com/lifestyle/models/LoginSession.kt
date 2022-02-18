@@ -22,6 +22,14 @@ class LoginSession private constructor(private val appContext: Context) {
         }
     }
 
+    /**
+     * @return whether or not a user exists (valid StoredUser) with this username
+     */
+    fun doesUserExist(username: String): Boolean {
+        val candidateUser = appContext.getSharedPreferences(username, Context.MODE_PRIVATE)
+        return candidateUser.contains("username");
+    }
+
     fun getLoggedInUser(): StoredUser? {
         if (isLoggedIn()) {
             val username = getSharedPreferences().getString(SESSION_USERNAME_KEY, null)

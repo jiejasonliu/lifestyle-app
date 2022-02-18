@@ -58,8 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 // todo: hacky way to login since we don't have authentication yet
                 // check if "username" field for that username is filled, otherwise this wasn't a user
-                val candidateUser = this.getSharedPreferences(username, Context.MODE_PRIVATE)
-                if (!candidateUser.contains("username")) {
+                if (!LoginSession.getInstance(this).doesUserExist(username)) {
                     Toast.makeText(this, "No profile was found with that username", Toast.LENGTH_SHORT).show()
                     return
                 }

@@ -222,6 +222,10 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         textLayoutUsername.helperText = "Cannot be changed after signup"
     }
 
+    fun getUsernameField(): String? {
+        return getText(textLayoutUsername)
+    }
+
 
     /**
      * @return the text; or null if the text is empty/blank

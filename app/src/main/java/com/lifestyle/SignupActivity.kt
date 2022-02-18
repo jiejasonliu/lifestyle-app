@@ -32,24 +32,31 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.buttonFinishSignup -> {
-                signupFragment =
-                    supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
+                val loginSession = LoginSession.getInstance(applicationContext)
+                signupFragment = supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
+
+                // check if user already exists before writing
+                var candidateUsername = signupFragment.getUsernameField()
+                if (candidateUsername != null && loginSession.doesUserExist(candidateUsername)) {
+                    Toast.makeText(this, "This username is already taken", Toast.LENGTH_SHORT).show()
+                    return
+                }
 
                 // pull in data from fields and write if successful
                 val result = signupFragment.aggregateFieldsAndWrite()
 
+                // display any parsing errors
                 if (result == null) {
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                     return
                 }
-
                 if (!result.success || result.userProfile == null) {
                     Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
                     return
                 }
 
                 // successful
-                LoginSession.getInstance(applicationContext).login(result.userProfile.username)
+                loginSession.login(result.userProfile.username)
                 finishSignupButton.isEnabled = false
                 Handler(Looper.getMainLooper()).postDelayed({
                     finish()
