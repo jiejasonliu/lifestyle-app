@@ -90,17 +90,19 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.cardViewBmi -> {
-                Toast.makeText(this, "BMI Calculator Clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, BMIActivity::class.java))
             }
 
             R.id.cardViewHiking -> {
-                Toast.makeText(this, "Hiking Trails Clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, HikingActivity::class.java))
             }
 
             R.id.cardViewWeather -> {
-                Toast.makeText(this, "Weather Clicked", Toast.LENGTH_SHORT).show()
+                if (!LoginSession.getInstance(this).isLoggedIn()) {
+                    Toast.makeText(this, "User must be logged in", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                startActivity(Intent(this, WeatherActivity::class.java))
             }
 
             R.id.cardViewSettings -> {
