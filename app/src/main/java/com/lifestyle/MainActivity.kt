@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.Toast
 import android.content.Intent
 import android.view.View
-import android.widget.TextView
 import com.lifestyle.models.LoginSession
 
 

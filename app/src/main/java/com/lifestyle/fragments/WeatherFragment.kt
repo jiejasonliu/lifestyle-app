@@ -32,8 +32,8 @@ class WeatherFragment: Fragment() {
     private lateinit var textViewTemperature: TextView
     private lateinit var imageViewWeatherIcon: ImageView
     private lateinit var textViewWeatherDescription: TextView
-    private var lat: Float = 0.0F
-    private var long: Float = 0.0F
+    private var lat: Float? = null
+    private var long: Float? = null
 
     companion object {
         private var userCity: String? = null
@@ -71,7 +71,10 @@ class WeatherFragment: Fragment() {
         if (userCity == null || userCountry == null) {
             Toast.makeText(activity, "Please update location information", Toast.LENGTH_SHORT).show()
             requireActivity().finish()
+            return
         }
+
+        // geocoding: location -> (lat, long)
         getLatLong()
     }
 
@@ -89,20 +92,24 @@ class WeatherFragment: Fragment() {
                 val data = downloadUrl(geocodeURL)
 
                 // Parse the response
-                val results = parseGeocodeResponse(JSONArray(data))
-
-                // Go back to main thread
-                withContext(Dispatchers.Main) {
-                    // Update UI from main thread
-                    getWeatherData()
+                parseGeocodeResponse(JSONArray(data))
+                if (lat == null || long == null) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(activity, "Could not find the location specified", Toast.LENGTH_SHORT).show()
+                        requireActivity().finish()
+                    }
+                    return@launch
                 }
+
+                // Get weather data after geocoding
+                getWeatherData()
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
 
-    private fun getWeatherData() {
+    private suspend fun getWeatherData() {
         // Call openweathermap API
         val stringUrl = "https://api.openweathermap.org/data/2.5/onecall" +
                 "?lat=${lat}&lon=${long}" +
@@ -113,7 +120,7 @@ class WeatherFragment: Fragment() {
         // Download json data from URL
         try {
             // Get weather data on IO thread
-            CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
                 // Call Openweathermaps API
                 val data = downloadUrl(stringUrl)
 
@@ -165,8 +172,10 @@ class WeatherFragment: Fragment() {
     @Throws(JSONException::class)
     private fun parseGeocodeResponse(data: JSONArray){
         // Get geocode information
-        lat = (data[0] as JSONObject).getString("lat").toFloat()
-        long = (data[0] as JSONObject).getString("lon").toFloat()
+        if (data.length() > 0) {
+            lat = (data[0] as JSONObject).getString("lat").toFloat()
+            long = (data[0] as JSONObject).getString("lon").toFloat()
+        }
     }
 
     fun updateWeather(results: Map<String, String>) {
