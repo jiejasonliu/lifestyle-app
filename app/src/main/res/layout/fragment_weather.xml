@@ -43,8 +43,8 @@
 
     <ImageView
         android:id="@+id/imageViewWeatherIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toStartOf="@+id/textViewWeatherDescription"
         app:layout_constraintHorizontal_bias="0.5"

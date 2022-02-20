@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:2.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     // fragment-testing: realistically should be androidTestImplementation but bug with API 30 forces debugImplementation
     debugImplementation 'androidx.fragment:fragment-testing:1.4.1'
     testImplementation 'junit:junit:4.+'

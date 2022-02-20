@@ -23,6 +23,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.roundToInt
+import com.squareup.picasso.Picasso
 
 class WeatherFragment: Fragment() {
 
@@ -165,6 +166,7 @@ class WeatherFragment: Fragment() {
         // Add to results
         results["temp"] = currentTempString
         results["desc"] = currentDetails.getString("description")
+        results["icon"] = currentDetails.getString("icon")
         return results
     }
 
@@ -182,6 +184,8 @@ class WeatherFragment: Fragment() {
         textViewCountry.setText(userCountry)
         textViewTemperature.setText(results["temp"] + "\u2109")
         textViewWeatherDescription.setText(results["desc"])
-        imageViewWeatherIcon.setImageResource(R.drawable.ic_weather_64)
+
+        var iconUrl:String = "https://openweathermap.org/img/w/" + results["icon"] + ".png";
+        Picasso.get().load(iconUrl).fit().centerCrop().into(imageViewWeatherIcon)
     }
 }
