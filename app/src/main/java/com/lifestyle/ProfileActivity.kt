@@ -11,8 +11,8 @@ import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 
 class ProfileActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var applyChangesButton: Button
-    private lateinit var editProfileFragment: EditProfileFragment
+    lateinit var applyChangesButton: Button
+    lateinit var editProfileFragment: EditProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +32,10 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         val loginSession = LoginSession.getInstance(this)
         if (!loginSession.isLoggedIn()) {
             Toast.makeText(this, "User session expired", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
         }
+
         editProfileFragment.disableImmutableFields()   // e.g. username
         editProfileFragment.fillProfileFields(loginSession.getLoggedInUser()!!)
     }

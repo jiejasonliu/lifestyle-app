@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.lifestyle.R
-import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

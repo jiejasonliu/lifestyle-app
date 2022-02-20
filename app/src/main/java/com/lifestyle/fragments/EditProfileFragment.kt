@@ -7,41 +7,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import com.lifestyle.R
-import com.lifestyle.interfaces.IUserProfile
 import com.lifestyle.models.EditProfileResult
 import com.lifestyle.models.StoredUser
-import androidx.core.app.ActivityCompat.startActivityForResult
-
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.widget.EditText
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.net.toUri
+import com.lifestyle.databinding.FragmentEditProfileBinding
 import com.lifestyle.helpers.ExternalStorageSaver
-import java.io.File
-import java.net.URI
-
 
 class EditProfileFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var changePictureButton: Button
-    private lateinit var profileImageView: ShapeableImageView
-    private lateinit var textLayoutUsername: TextInputLayout
-    private lateinit var textLayoutFullName: TextInputLayout
-    private lateinit var textLayoutAge: TextInputLayout
-    private lateinit var textLayoutCity: TextInputLayout
-    private lateinit var textLayoutState: TextInputLayout
-    private lateinit var textLayoutCountry: TextInputLayout
-    private lateinit var textLayoutSex: TextInputLayout
-    private lateinit var textLayoutWeight: TextInputLayout
-    private lateinit var textLayoutHeightFt: TextInputLayout
-    private lateinit var textLayoutHeightIn: TextInputLayout
+    // todo: refactor all lateinit(s) here to use View Binding:
+    //  https://developer.android.com/topic/libraries/view-binding
+    //  - dynamically allows calling `this.binding.<view-id>` to get the view object
+    //  - effectively gets rid of all viewObject = R.id.<view-id> (aka all these lateinits)
+    lateinit var changePictureButton: Button
+    lateinit var profileImageView: ShapeableImageView
+    lateinit var textLayoutUsername: TextInputLayout
+    lateinit var textLayoutAge: TextInputLayout
+    lateinit var textLayoutCity: TextInputLayout
+    lateinit var textLayoutFullName: TextInputLayout
+    lateinit var textLayoutState: TextInputLayout
+    lateinit var textLayoutCountry: TextInputLayout
+    lateinit var textLayoutSex: TextInputLayout
+    lateinit var textLayoutWeight: TextInputLayout
+    lateinit var textLayoutHeightFt: TextInputLayout
+    lateinit var textLayoutHeightIn: TextInputLayout
 
     private var currentPictureUriString: String? = null
 
@@ -187,6 +184,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
             if (!str.isNullOrBlank())
                 this.setText(str)
         }
+
         fun EditText.setIfExists(int: Int?) {
             if (int != null)
                 this.setText(int.toString())
@@ -230,7 +228,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     /**
      * @return the text; or null if the text is empty/blank
      */
-    private fun getText(layout: TextInputLayout?): String? {
+    fun getText(layout: TextInputLayout?): String? {
         val result = layout?.editText?.text?.toString()?.trim()
         if (result != null && (!result.isNullOrBlank()))
             return result

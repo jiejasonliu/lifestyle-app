@@ -12,8 +12,8 @@ import com.lifestyle.fragments.EditProfileFragment
 import com.lifestyle.models.LoginSession
 
 class SignupActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var finishSignupButton: Button
-    private lateinit var signupFragment: EditProfileFragment
+    lateinit var finishSignupButton: Button
+    lateinit var signupFragment: EditProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +24,8 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
 
         // populate late init
         finishSignupButton = findViewById(R.id.buttonFinishSignup)
+        signupFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
 
         // register listeners
         finishSignupButton.setOnClickListener(this)
@@ -33,12 +35,12 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
         when (view?.id) {
             R.id.buttonFinishSignup -> {
                 val loginSession = LoginSession.getInstance(applicationContext)
-                signupFragment = supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
 
                 // check if user already exists before writing
                 var candidateUsername = signupFragment.getUsernameField()
                 if (candidateUsername != null && loginSession.doesUserExist(candidateUsername)) {
-                    Toast.makeText(this, "This username is already taken", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "This username is already taken", Toast.LENGTH_SHORT)
+                        .show()
                     return
                 }
 
