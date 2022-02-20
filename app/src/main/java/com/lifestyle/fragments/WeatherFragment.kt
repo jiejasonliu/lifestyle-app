@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.lifestyle.helpers.HourlyWeatherAdaptor
 import com.lifestyle.R
 import com.lifestyle.models.StoredUser
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +27,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.roundToInt
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WeatherFragment: Fragment() {
 
@@ -32,6 +37,9 @@ class WeatherFragment: Fragment() {
     private lateinit var textViewTemperature: TextView
     private lateinit var imageViewWeatherIcon: ImageView
     private lateinit var textViewWeatherDescription: TextView
+    private lateinit var recyclerHourlyWeather: RecyclerView
+    private lateinit var hourlyWeatherAdaptor: HourlyWeatherAdaptor
+    private var hourlyWeatherItems = ArrayList<Triple<String, String, String>>()
     private var lat: Float? = null
     private var long: Float? = null
 
@@ -58,6 +66,12 @@ class WeatherFragment: Fragment() {
         textViewTemperature= view.findViewById(R.id.textViewTemperature)
         imageViewWeatherIcon = view.findViewById(R.id.imageViewWeatherIcon)
         textViewWeatherDescription = view.findViewById(R.id.textViewWeatherDescription)
+        recyclerHourlyWeather = view.findViewById(R.id.recyclerViewHourlyWeather)
+
+        // Setup the recycler view adaptor
+        hourlyWeatherAdaptor = HourlyWeatherAdaptor(hourlyWeatherItems)
+        recyclerHourlyWeather.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerHourlyWeather.adapter = hourlyWeatherAdaptor
 
         return view
     }
@@ -113,7 +127,7 @@ class WeatherFragment: Fragment() {
         // Call openweathermap API
         val stringUrl = "https://api.openweathermap.org/data/2.5/onecall" +
                 "?lat=${lat}&lon=${long}" +
-                "&exclude=alerts,daily,hourly,minutely" +
+                "&exclude=alerts,daily,minutely" +
                 "&units=imperial" +
                 "&appid=${resources.getString(R.string.openweather_maps_api)}"
 
@@ -131,6 +145,7 @@ class WeatherFragment: Fragment() {
                 withContext(Dispatchers.Main) {
                     // Update UI from main thread
                     updateWeather(results)
+                    setHourlyWeather(JSONObject(data))
                 }
             }
         } catch (e: IOException) {
@@ -185,7 +200,23 @@ class WeatherFragment: Fragment() {
         textViewTemperature.setText(results["temp"] + "\u2109")
         textViewWeatherDescription.setText(results["desc"])
 
-        var iconUrl:String = "https://openweathermap.org/img/w/" + results["icon"] + ".png";
+        // Fetch Icon for weather description and load it into imageview
+        var iconUrl:String = "https://openweathermap.org/img/w/" + results["icon"] + ".png"
         Picasso.get().load(iconUrl).fit().centerCrop().into(imageViewWeatherIcon)
+    }
+
+    private fun setHourlyWeather(data: JSONObject) {
+        var hourlyData: JSONArray = data.getJSONArray("hourly")
+
+        // For the next 24 hours, add items to recycler view
+        for (i in 0..23) {
+            val date:Date = Date(hourlyData.getJSONObject(i).getString("dt").toLong()*1000)
+            val temp:String = hourlyData.getJSONObject(i).getString("temp")
+            val iconURL:String = hourlyData.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")
+
+            hourlyWeatherItems.add(Triple(date.toString(),temp+"\u2109",iconURL))
+        }
+
+        hourlyWeatherAdaptor.notifyDataSetChanged()
     }
 }
