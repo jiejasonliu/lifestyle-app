@@ -176,13 +176,12 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
         val isActive = buttonActive.isSelected
         var weightChange = editTextWeightChange.text.toString().toInt()
 
-        if(textInputWeight.text.toString() == "") {
+        if(weightChange > 2) {
             Toast.makeText(this, "It is not advisable to try and change weight by more than 2 pounds in a week...", Toast.LENGTH_LONG).show()
         }
 
         if(buttonLoseWeight.isSelected)
             weightChange *= -1
-
 
         // Update user profile
         if(optionalUser != null) {
@@ -222,16 +221,16 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
             var newBMR = (bmr * 1.55).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
-            if(newBMR < 1200)
-                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT)
+            if((newBMR + caloriesToMakeDifference) < 1200)
+                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT).show()
 
         }
         else {
             val newBMR = (bmr * 1.2).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
-            if(newBMR < 1200)
-                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT)
+            if((newBMR + caloriesToMakeDifference) < 1200)
+                Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -247,15 +246,15 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
             val newBMR = (bmr * 1.55).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
-            if(newBMR < 1000)
-                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT)
+            if((newBMR + caloriesToMakeDifference) < 1000)
+                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT).show()
         }
         else {
             val newBMR = (bmr * 1.2).toInt()
             textViewBMR.setText(newBMR.toString())
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
-            if(newBMR < 1000)
-                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT)
+            if((newBMR + caloriesToMakeDifference) < 1000)
+                Toast.makeText(this, "You should be eating more than 1000 calories", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -270,7 +269,7 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
                 R.id.editTextWeightChange -> {
                     if(editTextWeightChange.text.toString() != "0") {
                         if(buttonMaintainWeight.isSelected)
-                            Toast.makeText(this, "Select gain or lose weight", Toast.LENGTH_SHORT)
+                            Toast.makeText(this, "Select gain or lose weight", Toast.LENGTH_SHORT).show()
                         else
                             updateCalculations()
                     } else
