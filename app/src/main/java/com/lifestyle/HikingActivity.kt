@@ -52,6 +52,8 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityHikingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.hide()
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
