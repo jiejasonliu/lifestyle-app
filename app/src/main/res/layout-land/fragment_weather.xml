@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="80dp"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Salt Lake City" />
+
+    <TextView
+        android:id="@+id/textViewCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/textViewCity"
+        app:layout_constraintStart_toStartOf="@+id/textViewCity"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCity"
+        tools:text="United States"/>
+
+    <TextView
+        android:id="@+id/textViewTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textSize="80sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCountry"
+        tools:text="34\u2109" />
+
+    <ImageView
+        android:id="@+id/imageViewWeatherIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewTemperature"
+        app:layout_constraintStart_toEndOf="@+id/textViewTemperature"
+        app:layout_constraintTop_toTopOf="@+id/textViewTemperature" />
+
+    <TextView
+        android:id="@+id/textViewWeatherDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewTemperature"
+        app:layout_constraintStart_toEndOf="@+id/imageViewWeatherIcon"
+        app:layout_constraintTop_toTopOf="@+id/textViewTemperature"
+        tools:text="Partly Cloudy" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHourlyWeather"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTemperature" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
