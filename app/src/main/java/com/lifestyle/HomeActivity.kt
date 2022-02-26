@@ -1,7 +1,6 @@
 package com.lifestyle
 
 import android.content.Intent
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -93,7 +92,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.cardViewBmi -> {
-                startActivity(Intent(this, BMIActivity::class.java))
+                startActivity(Intent(this, FitnessActivity::class.java))
             }
 
             R.id.cardViewHiking -> {

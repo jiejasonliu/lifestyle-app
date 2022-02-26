@@ -10,8 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
+import java.text.DecimalFormat
 
-class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener {
+class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener {
 
     private lateinit var textInputWeight: TextInputEditText
     private lateinit var textInputHeightFt: TextInputEditText
@@ -24,6 +25,7 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
     private lateinit var buttonNotActive: Button
     private lateinit var textViewLoseOrGain : TextView
     private lateinit var editTextWeightChange: EditText
+    private lateinit var textViewBMI: TextView
     private lateinit var textViewBMR: TextView
     private lateinit var textViewTargetCalories: TextView
 
@@ -49,6 +51,7 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
         buttonNotActive = findViewById(R.id.buttonNotActive)
         textViewLoseOrGain = findViewById(R.id.textViewLoseOrGain)
         editTextWeightChange = findViewById(R.id.editTextWeightChange)
+        textViewBMI = findViewById(R.id.textViewBMI)
         textViewBMR = findViewById(R.id.textViewBMR)
         textViewTargetCalories = findViewById(R.id.textViewTargetCalories)
 
@@ -177,7 +180,7 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
         var weightChange = editTextWeightChange.text.toString().toInt()
 
         if(weightChange > 2) {
-            Toast.makeText(this, "It is not advisable to try and change weight by more than 2 pounds in a week...", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "You shouldn't try and change weight by more than 2 pounds in a week.", Toast.LENGTH_LONG).show()
         }
 
         if(buttonLoseWeight.isSelected)
@@ -196,7 +199,6 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
     }
 
     fun updateUser(user: StoredUser, weight: Int, heightFt:Int, heightIn: Int, weightChange: Int) {
-
         var height: Int? = null
         if (heightFt != null && heightIn != null) {
             height = (12 * heightFt) + heightIn
@@ -207,15 +209,18 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
         user.weightChange = weightChange
     }
 
-
     fun updateCaloriesForMale(weight: Int, heightFt: Int, heightIn: Int, age: Int, weightChange: Int, isActive: Boolean) {
         val weightInKG = .453592 * weight
-        val heightInCM = 2.54 * (heightFt * 12 + heightIn)
+        val heightInInches = (heightFt * 12) + heightIn
+        val heightInCM = 2.54 * heightInInches
+        var bmi = (weight.toDouble() / (heightInInches.toDouble() * heightInInches.toDouble())) * 703.0
         val bmr = (10 * weightInKG) + (6.25 * heightInCM) - (5 * age) + 5
 
         var caloriesToMakeDifference = 0
         if(weightChange != 0)
             caloriesToMakeDifference = weightChange * 3500 / 7
+
+        textViewBMI.setText(String.format("%.1f", bmi))
 
         if(isActive) {
             var newBMR = (bmr * 1.55).toInt()
@@ -223,7 +228,6 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
             if((newBMR + caloriesToMakeDifference) < 1200)
                 Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT).show()
-
         }
         else {
             val newBMR = (bmr * 1.2).toInt()
@@ -231,16 +235,18 @@ class BMIActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChang
             textViewTargetCalories.setText((newBMR + caloriesToMakeDifference).toString())
             if((newBMR + caloriesToMakeDifference) < 1200)
                 Toast.makeText(this, "You should be eating more than 1200 calories", Toast.LENGTH_SHORT).show()
-
         }
     }
 
     fun updateCaloriesForFemale(weight: Int, heightFt: Int, heightIn: Int, age: Int, weightChange: Int, isActive: Boolean) {
         val weightInKG = .453592 * weight
-        val heightInCM = 2.54 * (heightFt * 12 + heightIn)
-
+        val heightInInches = (heightFt * 12) + heightIn
+        val heightInCM = 2.54 * heightInInches
+        val bmi = (weight / (heightInInches * heightInInches)) * 703
         var bmr = (10 * weightInKG) + (6.25 * heightInCM) - (5 * age) - 161
         val caloriesToMakeDifference = weightChange * 3500 / 7
+
+        textViewBMI.setText(String.format("%.1f", bmi))
 
         if(isActive) {
             val newBMR = (bmr * 1.55).toInt()

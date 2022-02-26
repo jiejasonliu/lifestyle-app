@@ -32,9 +32,9 @@
             android:name=".WeatherActivity"
             android:exported="false" />
         <activity
-            android:name=".BMIActivity"
+            android:name=".FitnessActivity"
             android:exported="false"
-            android:label="BMIActivity" />
+            android:label="FitnessActivity" />
         <activity
             android:name=".HikingActivity"
             android:exported="false"
