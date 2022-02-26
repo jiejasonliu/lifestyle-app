@@ -27,6 +27,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.roundToInt
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -211,10 +212,11 @@ class WeatherFragment: Fragment() {
         // For the next 24 hours, add items to recycler view
         for (i in 0..23) {
             val date:Date = Date(hourlyData.getJSONObject(i).getString("dt").toLong()*1000)
+            val sdf:SimpleDateFormat = SimpleDateFormat("EE h:mm a")
             val temp:String = hourlyData.getJSONObject(i).getString("temp")
             val iconURL:String = hourlyData.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")
 
-            hourlyWeatherItems.add(Triple(date.toString(),temp+"\u2109",iconURL))
+            hourlyWeatherItems.add(Triple(sdf.format(date),temp+"\u2109",iconURL))
         }
 
         hourlyWeatherAdaptor.notifyDataSetChanged()
