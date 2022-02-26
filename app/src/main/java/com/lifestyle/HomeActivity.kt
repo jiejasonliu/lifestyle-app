@@ -14,14 +14,14 @@ import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var cardViewProfile: CardView
-    private lateinit var cardViewBmi: CardView
-    private lateinit var cardViewHiking: CardView
-    private lateinit var cardViewWeather: CardView
-    private lateinit var cardViewSettings: CardView
-    private lateinit var cardViewLogout: CardView
-    private lateinit var imageViewProfilePicture: ImageView
-    private lateinit var textViewMyDashboard: TextView
+    lateinit var cardViewProfile: CardView
+    lateinit var cardViewBmi: CardView
+    lateinit var cardViewHiking: CardView
+    lateinit var cardViewWeather: CardView
+    lateinit var cardViewSettings: CardView
+    lateinit var cardViewLogout: CardView
+    lateinit var imageViewProfilePicture: ImageView
+    lateinit var textViewMyDashboard: TextView
 
     private var optionalUser: StoredUser? = null    // initialized in onCreate
 

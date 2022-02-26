@@ -12,6 +12,9 @@ class LifestyleTestHelper {
     companion object {
         const val TEST_USERNAME = "TEST_TEMP_USERNAME"
         const val TEST_FULL_NAME = "TEST_TEMP_FULL_NAME"
+        const val TEST_CITY = "Salt Lake City"
+        const val TEST_COUNTRY = "United States"
+        const val TEST_INVALID_CITY = "TEST_TEMP_INVALID_CITY"
 
         // todo: update as needed if 'required fields' change
         // fill all the 'required fields' so we can isolate errors on a different field
@@ -23,6 +26,14 @@ class LifestyleTestHelper {
         fun createUserAndLogin(context: Context, username: String, fullName: String) {
             val testUser = StoredUser(context, username)
             testUser.fullName = fullName
+            LoginSession.getInstance(context).login(username)
+        }
+
+        fun createUserAndLoginWithLocation(context: Context, username: String, fullName: String, city: String, country: String) {
+            val testUser = StoredUser(context, username)
+            testUser.fullName = fullName
+            testUser.city = city
+            testUser.country = country
             LoginSession.getInstance(context).login(username)
         }
 
