@@ -21,11 +21,7 @@ class WeatherActivity : AppCompatActivity() {
         user = LoginSession.getInstance(this).getLoggedInUser()
 
         if (savedInstanceState == null) {
-            if (user != null) {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.container, WeatherFragment.newInstance(user!!))
-                    .commit()
-            } else {
+            if (user == null) {
                 finish()
                 return
             }

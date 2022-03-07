@@ -2,9 +2,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dashboard_background"
-    android:id="@+id/container"
     tools:context=".WeatherActivity">
+
+    <fragment class="com.lifestyle.fragments.WeatherFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dashboard_background"
+        tools:context=".WeatherActivity">
+    </fragment>
 </FrameLayout>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/dashboard_background">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewProfileTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="0"
+            app:layout_row="0">
+
+            <!--Image for profile-->
+            <ImageView
+                android:id="@+id/imageViewProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_profile_64" />
+
+            <!--Profile Text-->
+            <TextView
+                android:id="@+id/textViewProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Profile"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewBmiTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="0"
+            app:layout_row="1">
+
+            <!--Image for BMI Calculator-->
+            <ImageView
+                android:id="@+id/imageViewBMI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_bmi_64" />
+
+            <!--BMI Calculator Text-->
+            <TextView
+                android:id="@+id/textViewBMI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Fitness"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewHikingTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="1"
+            app:layout_row="0">
+
+            <!--Image for Hiking-->
+            <ImageView
+                android:id="@+id/imageViewHiking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_hiking_64" />
+
+            <!--Hiking Trails Text-->
+            <TextView
+                android:id="@+id/textViewHiking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Hiking Trails"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewWeatherTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="1"
+            app:layout_row="1">
+
+            <!--Image for Weather-->
+            <ImageView
+                android:id="@+id/imageViewWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_weather_64" />
+
+            <!--Weather Text-->
+            <TextView
+                android:id="@+id/textViewWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Weather"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewSettingsTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="2"
+            app:layout_row="0">
+
+            <!--Image for settings-->
+            <ImageView
+                android:id="@+id/imageViewSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_settings_64" />
+
+            <!--Settings Text-->
+            <TextView
+                android:id="@+id/textViewSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Settings"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewHomeTablet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/orange_50"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
+        app:layout_gravity="fill"
+        android:layout_weight="1">
+
+        <!--Inner Vertical Linear Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_column="2"
+            app:layout_row="1">
+
+            <!--Image for Logout-->
+            <ImageView
+                android:id="@+id/imageViewHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_home_64" />
+
+            <!--Logout Text-->
+            <TextView
+                android:id="@+id/textViewHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Home"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

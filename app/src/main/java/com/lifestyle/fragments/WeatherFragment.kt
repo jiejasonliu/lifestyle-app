@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lifestyle.helpers.HourlyWeatherAdaptor
 import com.lifestyle.R
+import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,20 +49,18 @@ class WeatherFragment: Fragment() {
         private var userCity: String? = null
         private var userCountry: String? = null
         private var userState: String? = null
-
-        fun newInstance(user: StoredUser): WeatherFragment {
-            userCity = user.city
-            userCountry = user.country
-            userState = user.state
-            return WeatherFragment()
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        val view:View =  inflater.inflate(R.layout.fragment_weather, container, false)
+        return inflater.inflate(R.layout.fragment_weather, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         textViewCity = view.findViewById(R.id.textViewCity)
         textViewCountry = view.findViewById(R.id.textViewCountry)
         textViewTemperature= view.findViewById(R.id.textViewTemperature)
@@ -74,15 +73,12 @@ class WeatherFragment: Fragment() {
         recyclerHourlyWeather.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerHourlyWeather.adapter = hourlyWeatherAdaptor
 
-        return view
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         showWeather()
     }
 
     private fun showWeather() {
+        userCity = LoginSession.getInstance(requireContext()).getLoggedInUser()?.city
+        userCountry = LoginSession.getInstance(requireContext()).getLoggedInUser()?.country
         if (userCity == null || userCountry == null) {
             Toast.makeText(activity, "Please update location information", Toast.LENGTH_SHORT).show()
             requireActivity().finish()
