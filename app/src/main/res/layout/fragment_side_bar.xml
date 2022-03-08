@@ -28,7 +28,7 @@
 
             <!--Image for profile-->
             <ImageView
-                android:id="@+id/imageViewProfile"
+                android:id="@+id/imageViewProfileTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -36,7 +36,7 @@
 
             <!--Profile Text-->
             <TextView
-                android:id="@+id/textViewProfile"
+                android:id="@+id/textViewProfileTablet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -70,7 +70,7 @@
 
             <!--Image for BMI Calculator-->
             <ImageView
-                android:id="@+id/imageViewBMI"
+                android:id="@+id/imageViewBMITablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -78,7 +78,7 @@
 
             <!--BMI Calculator Text-->
             <TextView
-                android:id="@+id/textViewBMI"
+                android:id="@+id/textViewBMITablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -111,7 +111,7 @@
 
             <!--Image for Hiking-->
             <ImageView
-                android:id="@+id/imageViewHiking"
+                android:id="@+id/imageViewHikingTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -119,7 +119,7 @@
 
             <!--Hiking Trails Text-->
             <TextView
-                android:id="@+id/textViewHiking"
+                android:id="@+id/textViewHikingTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -152,7 +152,7 @@
 
             <!--Image for Weather-->
             <ImageView
-                android:id="@+id/imageViewWeather"
+                android:id="@+id/imageViewWeatherTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -160,7 +160,7 @@
 
             <!--Weather Text-->
             <TextView
-                android:id="@+id/textViewWeather"
+                android:id="@+id/textViewWeatherTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -193,7 +193,7 @@
 
             <!--Image for settings-->
             <ImageView
-                android:id="@+id/imageViewSettings"
+                android:id="@+id/imageViewSettingsTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -201,7 +201,7 @@
 
             <!--Settings Text-->
             <TextView
-                android:id="@+id/textViewSettings"
+                android:id="@+id/textViewSettingsTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -234,7 +234,7 @@
 
             <!--Image for Logout-->
             <ImageView
-                android:id="@+id/imageViewHome"
+                android:id="@+id/imageViewHomeTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -242,7 +242,7 @@
 
             <!--Logout Text-->
             <TextView
-                android:id="@+id/textViewHome"
+                android:id="@+id/textViewHomeTablet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

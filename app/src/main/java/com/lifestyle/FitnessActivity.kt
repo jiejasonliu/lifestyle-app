@@ -37,6 +37,8 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bmi)
 
+        supportActionBar?.hide()
+
         optionalUser = LoginSession.getInstance(this).getLoggedInUser()
 
         // Gather view objects
