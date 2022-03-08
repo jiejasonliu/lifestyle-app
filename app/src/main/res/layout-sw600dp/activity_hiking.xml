@@ -16,10 +16,9 @@
         android:layout_weight="1"></fragment>
 
     <fragment
-        android:id="@+id/page_content"
-        class="com.lifestyle.fragments.WeatherFragment"
+        android:id="@+id/map"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4"
-        tools:context=".WeatherActivity"></fragment>
+        android:layout_weight="4" />
 </LinearLayout>

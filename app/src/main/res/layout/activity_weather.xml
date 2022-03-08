@@ -8,10 +8,10 @@
     android:background="@drawable/dashboard_background"
     tools:context=".WeatherActivity">
 
-    <fragment class="com.lifestyle.fragments.WeatherFragment"
+    <fragment
+        class="com.lifestyle.fragments.WeatherFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/dashboard_background"
-        tools:context=".WeatherActivity">
-    </fragment>
+        tools:context=".WeatherActivity"></fragment>
 </FrameLayout>
