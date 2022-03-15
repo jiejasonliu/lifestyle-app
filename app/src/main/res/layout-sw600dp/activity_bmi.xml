@@ -61,6 +61,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_weight="0.5"
                         android:hint="@string/height_feet"
+                        android:textColorHint="@color/gray"
                         app:suffixText="@string/height_ft">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -81,6 +82,7 @@
                         android:layout_marginHorizontal="16dp"
                         android:layout_weight="0.5"
                         android:hint="@string/height_inches"
+                        android:textColorHint="@color/gray"
                         app:suffixText="@string/height_in">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -111,6 +113,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
                     android:hint="@string/weight_detailed"
+                    android:textColorHint="@color/gray"
                     app:startIconDrawable="@drawable/ic_weight_24"
                     app:startIconTint="@color/orange_800"
                     app:suffixText="@string/weight_lbs">

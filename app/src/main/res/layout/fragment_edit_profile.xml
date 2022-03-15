@@ -59,6 +59,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:hint="@string/username"
+            android:textColorHint="@color/gray"
             app:counterEnabled="true"
             app:counterMaxLength="@integer/max_username_length"
             app:endIconMode="clear_text"
@@ -91,6 +92,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.66"
                 android:hint="@string/full_name"
+                android:textColorHint="@color/gray"
                 app:endIconMode="clear_text"
                 app:helperText="@string/required_helperText"
                 app:startIconDrawable="@drawable/ic_profile_24"
@@ -114,6 +116,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.33"
                 android:hint="@string/age"
+                android:textColorHint="@color/gray"
                 app:startIconDrawable="@drawable/ic_cake_24"
                 app:startIconTint="@color/orange_800">
 
@@ -140,6 +143,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.55"
                 android:hint="@string/city"
+                android:textColorHint="@color/gray"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/ic_location_city_24"
                 app:startIconTint="@color/orange_800"
@@ -166,6 +170,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.45"
                 android:hint="@string/state"
+                android:textColorHint="@color/gray"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -189,6 +194,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:hint="@string/country"
+            android:textColorHint="@color/gray"
             app:endIconMode="clear_text"
             app:startIconDrawable="@drawable/ic_world_24"
             app:startIconTint="@color/orange_800">
@@ -222,6 +228,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.55"
                 android:hint="@string/sex"
+                android:textColorHint="@color/gray"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/ic_sex_24"
                 app:startIconTint="@color/orange_800">
@@ -247,6 +254,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_weight="0.45"
                 android:hint="@string/weight_detailed"
+                android:textColorHint="@color/gray"
                 app:startIconDrawable="@drawable/ic_weight_24"
                 app:startIconTint="@color/orange_800"
                 app:suffixText="@string/weight_lbs">
@@ -289,6 +297,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="0.5"
                 android:hint="@string/height_feet"
+                android:textColorHint="@color/gray"
                 app:suffixText="@string/height_ft">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -308,6 +317,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_weight="0.5"
                 android:hint="@string/height_inches"
+                android:textColorHint="@color/gray"
                 app:suffixText="@string/height_in">
 
                 <com.google.android.material.textfield.TextInputEditText
