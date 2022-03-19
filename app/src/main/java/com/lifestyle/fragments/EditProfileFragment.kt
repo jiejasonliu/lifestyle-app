@@ -17,7 +17,9 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.activity.viewModels
 import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.lifestyle.databinding.FragmentEditProfileBinding
 import com.lifestyle.helpers.ExternalStorageSaver
@@ -42,7 +44,7 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
     lateinit var textLayoutHeightFt: TextInputLayout
     lateinit var textLayoutHeightIn: TextInputLayout
 
-    lateinit var userViewModel: UserViewModel
+    private val userViewModel: UserViewModel by viewModels()
 
     private var currentPictureUriString: String? = null
 
@@ -73,8 +75,6 @@ class EditProfileFragment : Fragment(), View.OnClickListener {
         textLayoutWeight = view.findViewById(R.id.textInputLayoutWeight)
         textLayoutHeightFt = view.findViewById(R.id.textInputLayoutHeightFt)
         textLayoutHeightIn = view.findViewById(R.id.textInputLayoutHeightIn)
-
-        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         // save URI for when user submits the form
         changePictureButton.setOnClickListener(this)

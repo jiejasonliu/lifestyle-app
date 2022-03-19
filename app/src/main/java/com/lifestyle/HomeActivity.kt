@@ -7,11 +7,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
 import com.lifestyle.viewmodels.UserViewModel
@@ -26,7 +24,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var imageViewProfilePicture: ImageView
     lateinit var textViewMyDashboard: TextView
 
-    lateinit var userViewModel: UserViewModel
+    private val userViewModel: UserViewModel by viewModels()
 
     private var optionalUser: StoredUser? = null    // initialized in onCreate
 
@@ -47,7 +45,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewLogout = findViewById(R.id.cardViewLogout)
         imageViewProfilePicture = findViewById(R.id.imageViewProfilePicture)
         textViewMyDashboard = findViewById(R.id.textViewMyDashboard)
-        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         // bind observers from view models
         bindObservers()
