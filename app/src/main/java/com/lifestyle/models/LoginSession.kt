@@ -3,6 +3,7 @@ package com.lifestyle.models
 import android.content.Context
 import android.content.SharedPreferences
 
+@Deprecated(message="Replace with com.lifestyle.repositories.LoginRepository")
 class LoginSession private constructor(private val appContext: Context) {
 
     companion object Factory {
