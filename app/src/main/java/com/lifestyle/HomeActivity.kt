@@ -9,8 +9,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
+import com.lifestyle.viewmodels.UserViewModel
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var cardViewProfile: CardView
@@ -21,6 +25,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var cardViewLogout: CardView
     lateinit var imageViewProfilePicture: ImageView
     lateinit var textViewMyDashboard: TextView
+
+    lateinit var userViewModel: UserViewModel
 
     private var optionalUser: StoredUser? = null    // initialized in onCreate
 
@@ -41,6 +47,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewLogout = findViewById(R.id.cardViewLogout)
         imageViewProfilePicture = findViewById(R.id.imageViewProfilePicture)
         textViewMyDashboard = findViewById(R.id.textViewMyDashboard)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        // bind observers from view models
+        bindObservers()
 
         // bind listeners
         cardViewProfile.setOnClickListener(this)
@@ -49,19 +59,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         cardViewWeather.setOnClickListener(this)
         cardViewSettings.setOnClickListener(this)
         cardViewLogout.setOnClickListener(this)
-
-        // fill in optional data
-        fillWithUserData()
     }
 
-    /**
-     * The HomeActivity can be changed on resume:
-     *  (1) outside source affecting image files
-     *  (2) from editing your profile (name, img, etc.)
-     */
-    override fun onResume() {
-        super.onResume()
-        fillWithUserData()  // refetch
+    private fun bindObservers() {
+        // user data changed
+        userViewModel.userLiveData.observe(this) {
+            println("(HomeActivity) Observer callback for: userLiveData")
+            fillWithUserData()
+        }
     }
 
     private fun fillWithUserData() {
