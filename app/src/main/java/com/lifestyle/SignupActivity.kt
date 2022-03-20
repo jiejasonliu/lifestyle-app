@@ -8,12 +8,18 @@ import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.lifestyle.fragments.EditProfileFragment
 import com.lifestyle.models.LoginSession
+import com.lifestyle.viewmodels.ProfileFormViewModel
+import com.lifestyle.viewmodels.UserViewModel
 
 class SignupActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var finishSignupButton: Button
     lateinit var signupFragment: EditProfileFragment
+
+    private val userViewModel: UserViewModel by viewModels()
+    private val profileFormViewModel: ProfileFormViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,44 +33,51 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
         signupFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentEditProfileSignup) as EditProfileFragment
 
+        // bind observers from view models
+        bindObservers()
+
         // register listeners
         finishSignupButton.setOnClickListener(this)
     }
 
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.buttonFinishSignup -> {
-                val loginSession = LoginSession.getInstance(applicationContext)
+    private fun bindObservers() {
+        // form validation occurred
+        profileFormViewModel.validationResult.observe(this) {
+            println("(SignupActivity) Observer callback for: profileFormViewModel.validationResult")
 
-                // check if user already exists before writing
-                var candidateUsername = signupFragment.getUsernameField()
-                if (candidateUsername != null && loginSession.doesUserExist(candidateUsername)) {
-                    Toast.makeText(this, "This username is already taken", Toast.LENGTH_SHORT)
-                        .show()
-                    return
-                }
+            val result = profileFormViewModel.validationResult.value ?: return@observe
 
-                // pull in data from fields and write if successful
-                val result = signupFragment.aggregateFieldsAndWrite()
+            // error when validating
+            if (!result.success || result.partialUserProfile == null) {
+                Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
+            }
+            // success! apply changes to UserViewModel, then login
+            else {
+                userViewModel.login(result.partialUserProfile.username)
+                userViewModel.updateUserProfilePartial(result.partialUserProfile)
 
-                // display any parsing errors
-                if (result == null) {
-                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-                    return
-                }
-                if (!result.success || result.userProfile == null) {
-                    Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                // successful
-                loginSession.login(result.userProfile.username)
                 finishSignupButton.isEnabled = false
                 Handler(Looper.getMainLooper()).postDelayed({
                     finish()
                     startActivity(Intent(applicationContext, HomeActivity::class.java))
                     finishSignupButton.isEnabled = true
                 }, 250)
+            }
+        }
+    }
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.buttonFinishSignup -> {
+                // check if user already exists before writing
+                var candidateUsername = signupFragment.binding.textInputEditTextUsername.text.toString()
+                if (candidateUsername != null && userViewModel.doesUserExist(candidateUsername)) {
+                    Toast.makeText(this, "This username is already taken", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                // try to validate and create new account
+                profileFormViewModel.validateFormFields()   // -> validationResult.observe callback (see in bindObservers())
             }
         }
     }

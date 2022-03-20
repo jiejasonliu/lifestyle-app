@@ -67,18 +67,18 @@ class ProfileFormViewModel : ViewModel() {
         // write to UI regardless if the data was actually touched (updated)
         username.value = profile.username
         fullName.value = profile.fullName
-        age.value = profile.age.toString()
+        age.value = profile.age?.toString() ?: ""
         city.value = profile.city
         state.value = profile.state
         country.value = profile.country
         sex.value = profile.sex
-        weight.value = profile.weight.toString()
+        weight.value = profile.weight?.toString() ?: ""
 
         if (profile.height != null) {
             val feet = profile.height!! / 12
             val inches = profile.height!! % 12
-            heightFt.value = feet.toString()
-            heightIn.value = inches.toString()
+            heightFt.value = feet?.toString()
+            heightIn.value = inches?.toString()
         }
         else {
             heightFt.value = ""

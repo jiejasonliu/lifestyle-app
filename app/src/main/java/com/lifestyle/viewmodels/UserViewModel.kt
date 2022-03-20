@@ -1,7 +1,7 @@
 package com.lifestyle.viewmodels
 
+import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.lifestyle.interfaces.IUserProfile
@@ -13,18 +13,38 @@ import com.lifestyle.repositories.LoginRepository
 // extend from AndroidViewModel() instead of ViewModel() since we need a reference to Context
 class UserViewModel(application: Application) : AndroidViewModel(application) {
 
+    // won't actually leak since `applicationContext` lives until the entire app is destroyed
+    @SuppressLint("StaticFieldLeak")
+    private var appContext = application.applicationContext
+    private var loginRepository: LoginRepository = LoginRepository.getInstance(appContext)
+
     // if there is no logged in user, user.value will be null
     var loggedInUser = MutableLiveData<StoredUser?>()
 
     init {
-        fetchData(application.applicationContext)
+        fetchUser()
     }
 
     /**
      * Call this method to refresh/rebind live data
+     * Since LoginRepository is a singleton, all UserViewModels will be notified when `loggedInUser` changes.
      */
-    fun fetchData(appContext: Context) {
-        fetchUser(appContext)
+    private fun fetchUser() {
+        loginRepository.fetchLoggedInUser()
+        loggedInUser = loginRepository.loggedInUser
+    }
+
+
+    fun doesUserExist(username: String): Boolean {
+        return loginRepository.doesUserExist(username)
+    }
+
+    fun login(username: String) {
+        loginRepository.login(username)
+    }
+
+    fun logout(username: String) {
+        loginRepository.logout()
     }
 
     /**
@@ -42,6 +62,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     fun updateUserProfilePartial(profile: PartialUserProfile) {
         val loggedInUser: StoredUser? = loggedInUser.value
 
+        // user must be logged in
         if (loggedInUser != null) {
             // only write to user profile if the data was actually touched (updated)
             if (profile.fullName.shouldIncludeInUpdate()) loggedInUser.fullName = profile.fullName
@@ -62,11 +83,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * Completely replace stored user with the specified user profile.
-     * Useful for when registering a new account, ALL info are updated instead of just a subset.
      */
     fun updateUserProfileFull(profile: IUserProfile) {
         val loggedInUser: StoredUser? = loggedInUser.value
 
+        // user must be logged in
         if (loggedInUser != null) {
             // write to user profile regardless if settings were touched
             loggedInUser.fullName = profile.fullName
@@ -83,14 +104,5 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             // notify changes
             this.loggedInUser.postValue(this.loggedInUser.value)
         }
-    }
-
-    /**
-     * Since LoginRepository is a singleton, all UserViewModels will be notified when `loggedInUser` changes.
-     */
-    private fun fetchUser(appContext: Context) {
-        val loginRepository = LoginRepository.getInstance(appContext)
-        loginRepository.fetchLoggedInUser()
-        loggedInUser = loginRepository.loggedInUser
     }
 }
