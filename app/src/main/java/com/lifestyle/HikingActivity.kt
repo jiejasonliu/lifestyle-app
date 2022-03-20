@@ -18,19 +18,13 @@ import android.location.Location
 import android.location.LocationManager
 import android.location.LocationRequest
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
-import com.lifestyle.extensions.*
-import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlinx.coroutines.*
-import org.json.JSONException
-import org.json.JSONObject
+import com.lifestyle.viewmodels.HikingViewModel
 
 class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -39,6 +33,8 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var latlng: LatLng
     private lateinit var loc: Location
+
+    private val hikingViewModel: HikingViewModel by viewModels()
 
     companion object {
         const val ACCESS_FINE_LOC = Manifest.permission.ACCESS_FINE_LOCATION
@@ -60,8 +56,20 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         client = LocationServices.getFusedLocationProviderClient(this)
 
-        // Get user location
         getCurrentLocation()
+    }
+
+    private fun bindObservers(mMap: GoogleMap) {
+        // user data changed
+        hikingViewModel.hikingLiveData.observe(this) {
+            println("(HikingActivity) Observer callback for: hikingLiveData")
+            val markerList = hikingViewModel.hikingLiveData.value
+            if (!markerList.isNullOrEmpty()) {
+                markerList.forEach { option ->
+                    mMap.addMarker(option)
+                }
+            }
+        }
     }
 
     override fun onMapReady(mMap: GoogleMap) {
@@ -80,43 +88,12 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
         // Add markers to map
         mMap.addMarker(options)
 
-        // Create URL to find hiking trails near device location
-        var stringUrl =
-            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=hiking_trail&location=" +
-                    loc.latitude + "," + loc.longitude +
-                    "&radius=5000&types=tourist_attraction&sensor=true&key=" +
-                    resources.getString(R.string.google_maps_key)
+        // Set loc and fetch data
+        hikingViewModel.setLocation(loc)
+        hikingViewModel.fetchData(applicationContext)
 
-        // Download json data from URL
-        try {
-            // Get trail head locations on a new thread
-            CoroutineScope(Dispatchers.IO).launch {
-                // Call Google Places API
-                val data = downloadUrl(stringUrl)
-
-                // Parse the response
-                val response = parseHikingResponse(JSONObject(data))
-
-                // Go through each item from the response and create a list of map markers
-                val optionsList = arrayListOf<MarkerOptions>()
-                response.forEach { trail ->
-                    latlng = LatLng(trail["lat"]!!.toDouble(), trail["long"]!!.toDouble())
-                    options = MarkerOptions().position(latlng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)) as MarkerOptions
-                    options.title(trail["name"])
-                    optionsList.add(options)
-                }
-
-                // Go back to main thread and add markers to the map
-                withContext(Dispatchers.Main) {
-                    optionsList.forEach { option ->
-                        mMap.addMarker(option)
-                    }
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        // bind observers from view models
+        bindObservers(mMap)
     }
 
     private fun hasLocationPermissions(): Boolean {
@@ -179,37 +156,5 @@ class HikingActivity : AppCompatActivity(), OnMapReadyCallback {
                 getCurrentLocation()
             }
         }
-    }
-
-    private fun downloadUrl(string: String): String {
-        // Create URL from string
-        val url: URL = URL(string)
-        val inputStream: InputStream
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connect()
-
-        inputStream = connection.inputStream
-
-        // Convert input stream to string
-        return inputStream.bufferedReader().use(BufferedReader::readText)
-    }
-
-    @Throws(JSONException::class)
-    private fun parseHikingResponse(data: JSONObject): List<Map<String, String>> {
-        val results = mutableListOf<Map<String, String>>()
-        val trails = data.getJSONArray("results")
-
-        trails.forEach { jsonObj ->
-            var map = mutableMapOf<String, String>()
-
-            map["name"] = jsonObj.getString("name")
-            var loc = jsonObj.getJSONObject("geometry").getJSONObject("location")
-            map["lat"] = loc.getString("lat")
-            map["long"] = loc.getString("lng")
-
-            results.add(map)
-        }
-
-        return results
     }
 }
