@@ -1,8 +1,8 @@
 package com.lifestyle.interfaces
 
 interface IUserProfile {
-    val username: String     // should be unique per user!
-    val fullName: String     // no guarantees: culturally inclusive
+    val username: String      // should be unique per user!
+    val fullName: String?     // no guarantees: culturally inclusive
 
     // rest are optional per the guidelines
     val age: Int?

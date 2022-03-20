@@ -24,8 +24,8 @@ class StoredUser(private val appContext: Context, private val _username: String)
     // note: username should not be able to be modified
     override val username: String = sharedPreferences.getString("username", null) ?: "<error>"
 
-    override var fullName: String
-        get() = sharedPreferences.getString("fullName", null) ?: "<error>"
+    override var fullName: String?
+        get() = sharedPreferences.getString("fullName", null)
         set(v) = putStringAsync("fullName", v)
 
     override var age: Int?
