@@ -60,7 +60,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun bindObservers() {
         // user data changed
-        userViewModel.userLiveData.observe(this) {
+        userViewModel.loggedInUser.observe(this) {
             println("(HomeActivity) Observer callback for: userLiveData")
             fillWithUserData()
         }
