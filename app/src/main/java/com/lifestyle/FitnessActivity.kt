@@ -6,10 +6,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
+import com.lifestyle.viewmodels.ProfileFormViewModel
+import com.lifestyle.viewmodels.UserViewModel
 import java.text.DecimalFormat
 
 class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener {
@@ -29,6 +33,9 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
     private lateinit var textViewBMR: TextView
     private lateinit var textViewTargetCalories: TextView
 
+    private val userViewModel: UserViewModel by viewModels()
+    private val profileFormViewModel: ProfileFormViewModel by viewModels()
+
     private var optionalUser: StoredUser? = null    // initialized in onCreate
     private var usersSex: String = "M" // Default to male
     private var usersAge: Int = 20 // Default to 20 years old
@@ -36,8 +43,6 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bmi)
-
-        supportActionBar?.hide()
 
         optionalUser = LoginSession.getInstance(this).getLoggedInUser()
 
@@ -66,42 +71,84 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
         buttonNotActive.setOnClickListener(this)
 
         // Register change listeners
+        // I couldnt get this to work
+        // Values wont update when they change their "weight change" goal
         editTextWeightChange.setOnFocusChangeListener(this);
 
+        // bind observers from view models
+        bindObservers()
 
+        // Defaults to "Is Active" setting
+        buttonActive.isSelected = true
+    }
+
+    private fun bindObservers() {
+        // user data changed
+        userViewModel.loggedInUser.observe(this) {
+            println("(FitnessActivity) Observer callback for: userViewModel.loggedInUser")
+
+            // check if a user is logged in
+            if (userViewModel.loggedInUser != null) {
+                profileFormViewModel.updateFormFull(userViewModel.loggedInUser.value!!)
+            }
+            // user was NOT logged in
+            else {
+                Toast.makeText(this, "User session expired", Toast.LENGTH_SHORT).show()
+            }
+            profileFormViewModel.updateFormFull(userViewModel.loggedInUser.value!!)
+            fillWithUserData()
+        }
+
+        // form validation occurred
+        profileFormViewModel.validationResult.observe(this) {
+            println("(FitnessActivity) Observer callback for: profileFormViewModel.validationResult")
+
+            val result = profileFormViewModel.validationResult.value ?: return@observe
+
+            // error when validating
+            if (!result.success || result.partialUserProfile == null) {
+                Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
+            }
+            // success! apply changes to UserViewModel
+            else {
+                userViewModel.updateUserProfilePartial(result.partialUserProfile)
+                Toast.makeText(this, "Changes were applied!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun fillWithUserData() {
         // Set height and weight from user's info
         if(optionalUser != null) {
-            val user = optionalUser!!
+            val user = userViewModel.loggedInUser.value
 
-            if(!user.sex.isNullOrBlank())
-                usersSex = user.sex!!
+            if (!user?.sex.isNullOrBlank())
+                usersSex = user?.sex!!
 
-            if(user.age != null)
+            if (user?.age != null)
                 usersAge = user.age!!
 
-            if(user.weight != null)
+            if (user?.weight != null)
                 textInputWeight.setText(user.weight!!.toString())
 
-            if(user.weightChange != null) {
+            if (user?.weightChange != null) {
                 val weightChange = user.weightChange!!
-                if(weightChange < 0) {
+                if (weightChange < 0) {
                     editTextWeightChange.setText((weightChange * -1).toString())
                     buttonLoseWeight.isSelected = true
                     textViewLoseOrGain.setText("I want to lose")
-                }
-                else if(weightChange > 0) {
+                } else if (weightChange > 0) {
                     editTextWeightChange.setText(weightChange.toString())
                     buttonGainWeight.isSelected = true
                     textViewLoseOrGain.setText("I want to gain")
-                }
-                else {
+                } else {
                     buttonMaintainWeight.isSelected = true
                 }
             } else {
                 buttonMaintainWeight.isSelected = true
             }
 
-            if(user.height != null) {
+            if (user?.height != null) {
                 val feet = user.height?.div(12)
                 val inches = user.height?.mod(12)
 
@@ -109,19 +156,16 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
                 textInputHeightIn.setText(inches.toString())
 
                 // Set calculations if they have weight and height
-                if(user.weight != null)
+                if (user.weight != null)
                     updateCalculations()
             }
-        } else {
-            // Default to maintain weight
-            buttonMaintainWeight.isSelected = true
         }
-        buttonActive.isSelected = true
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.buttonUpdate -> {
+                profileFormViewModel.validateFormFields()   // -> validationResult.observe callback (see in bindObservers())
                 updateCalculations()
             }
             R.id.buttonLoseWeight -> {
