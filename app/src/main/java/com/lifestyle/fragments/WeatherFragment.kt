@@ -8,12 +8,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.GoogleMap
 import com.lifestyle.helpers.HourlyWeatherAdaptor
 import com.lifestyle.R
 import com.lifestyle.models.LoginSession
 import com.lifestyle.models.StoredUser
+import com.lifestyle.viewmodels.HikingViewModel
+import com.lifestyle.viewmodels.UserViewModel
+import com.lifestyle.viewmodels.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,8 +48,9 @@ class WeatherFragment: Fragment() {
     private lateinit var recyclerHourlyWeather: RecyclerView
     private lateinit var hourlyWeatherAdaptor: HourlyWeatherAdaptor
     private var hourlyWeatherItems = ArrayList<Triple<String, String, String>>()
-    private var lat: Float? = null
-    private var long: Float? = null
+
+    private val weatherViewModel: WeatherViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
     companion object {
         private var userCity: String? = null
@@ -73,121 +80,32 @@ class WeatherFragment: Fragment() {
         recyclerHourlyWeather.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerHourlyWeather.adapter = hourlyWeatherAdaptor
 
-        showWeather()
-    }
-
-    private fun showWeather() {
-        userCity = LoginSession.getInstance(requireContext()).getLoggedInUser()?.city
-        userCountry = LoginSession.getInstance(requireContext()).getLoggedInUser()?.country
-        if (userCity == null || userCountry == null) {
-            Toast.makeText(activity, "Please update location information", Toast.LENGTH_SHORT).show()
-            requireActivity().finish()
-            return
-        }
-
-        // geocoding: location -> (lat, long)
-        getLatLong()
-    }
-
-    private fun getLatLong() {
-        // Geocode the location provided by the user
-        val geocodeURL = "https://api.openweathermap.org/geo/1.0/direct" +
-                "?q=${userCity}" +
-                "&limit=1" +
-                "&appid=${resources.getString(R.string.openweather_maps_api)}"
-        // Download json data from URL
-        try {
-            // Get weather data on IO thread
-            CoroutineScope(Dispatchers.IO).launch {
-                // Call Openweathermaps API
-                val data = downloadUrl(geocodeURL)
-
-                // Parse the response
-                parseGeocodeResponse(JSONArray(data))
-                if (lat == null || long == null) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(activity, "Could not find the location specified", Toast.LENGTH_SHORT).show()
-                        requireActivity().finish()
-                    }
-                    return@launch
-                }
-
-                // Get weather data after geocoding
-                getWeatherData()
+        val user: StoredUser? = userViewModel.loggedInUser.value
+        if (user != null) {
+            if (user.city.isNullOrEmpty()) {
+                Toast.makeText(activity, "Please update location information", Toast.LENGTH_SHORT).show()
+                requireActivity().finish()
+                return
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    private suspend fun getWeatherData() {
-        // Call openweathermap API
-        val stringUrl = "https://api.openweathermap.org/data/2.5/onecall" +
-                "?lat=${lat}&lon=${long}" +
-                "&exclude=alerts,daily,minutely" +
-                "&units=imperial" +
-                "&appid=${resources.getString(R.string.openweather_maps_api)}"
-
-        // Download json data from URL
-        try {
-            // Get weather data on IO thread
-            withContext(Dispatchers.IO) {
-                // Call Openweathermaps API
-                val data = downloadUrl(stringUrl)
-
-                // Parse the response
-                val results = parseWeatherResponse(JSONObject(data))
-
-                // Go back to main thread
-                withContext(Dispatchers.Main) {
-                    // Update UI from main thread
-                    updateWeather(results)
-                    setHourlyWeather(JSONObject(data))
-                }
+            else {
+                userCity = user.city
+                userCountry = user.country
+                weatherViewModel.setCity(user.city!!)
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
+        weatherViewModel.fetchData(requireContext())
+
+        bindObservers()
     }
 
-    private fun downloadUrl(string: String): String {
-        // Create URL from string
-        val url: URL = URL(string)
-        val inputStream: InputStream
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connect()
-
-        inputStream = connection.inputStream
-
-        // Convert input stream to string
-        return inputStream.bufferedReader().use(BufferedReader::readText)
-    }
-
-    @Throws(JSONException::class)
-    private fun parseWeatherResponse(data: JSONObject): Map<String, String>{
-        // Get current weather information
-        var results = mutableMapOf<String, String>()
-        var currentWeather: JSONObject = data.getJSONObject("current")
-        var currentDetails: JSONObject = currentWeather.getJSONArray("weather").getJSONObject(0)
-        var currentTempString = currentWeather.getString("temp")
-
-        // Round the temperature
-        val currentTempRounded = currentTempString.toFloat().roundToInt()
-        currentTempString = currentTempRounded.toString()
-
-        // Add to results
-        results["temp"] = currentTempString
-        results["desc"] = currentDetails.getString("description")
-        results["icon"] = currentDetails.getString("icon")
-        return results
-    }
-
-    @Throws(JSONException::class)
-    private fun parseGeocodeResponse(data: JSONArray){
-        // Get geocode information
-        if (data.length() > 0) {
-            lat = (data[0] as JSONObject).getString("lat").toFloat()
-            long = (data[0] as JSONObject).getString("lon").toFloat()
+    private fun bindObservers() {
+        // API response received
+        weatherViewModel.weatherLiveData.observe(this) {
+            println("(WeatherFragment) Observer callback for: weatherLiveData")
+            val weatherData = weatherViewModel.weatherLiveData.value
+            if (weatherData != null) {
+                updateWeather(weatherData)
+            }
         }
     }
 
