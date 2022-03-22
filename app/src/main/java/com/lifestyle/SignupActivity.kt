@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.lifestyle.fragments.EditProfileFragment
-import com.lifestyle.models.LoginSession
 import com.lifestyle.viewmodels.ProfileFormViewModel
 import com.lifestyle.viewmodels.UserViewModel
 
@@ -53,8 +52,11 @@ class SignupActivity : AppCompatActivity(), View.OnClickListener {
             }
             // success! apply changes to UserViewModel, then login
             else {
-                userViewModel.login(result.partialUserProfile.username)
-                userViewModel.updateUserProfilePartial(result.partialUserProfile)
+                userViewModel.addNewUser(result.partialUserProfile.username)        // insert users
+                userViewModel.login(result.partialUserProfile.username)             // update login
+
+                // note: user MUST be logged in before their profile can be updated
+                userViewModel.updateUserProfilePartial(result.partialUserProfile)   // update users
 
                 finishSignupButton.isEnabled = false
                 Handler(Looper.getMainLooper()).postDelayed({

@@ -10,8 +10,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
-import com.lifestyle.models.LoginSession
-import com.lifestyle.models.StoredUser
 import com.lifestyle.viewmodels.UserViewModel
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
@@ -26,15 +24,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private val userViewModel: UserViewModel by viewModels()
 
-    private var optionalUser: StoredUser? = null    // initialized in onCreate
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         supportActionBar?.hide()
-
-        optionalUser = LoginSession.getInstance(this).getLoggedInUser()
 
         // populate late init
         cardViewProfile = findViewById(R.id.cardViewProfile)
@@ -62,14 +56,13 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         // user data changed
         userViewModel.loggedInUser.observe(this) {
             println("(HomeActivity) Observer callback for: userLiveData")
-            fillWithUserData()
+             fillWithUserData()
         }
     }
 
     private fun fillWithUserData() {
-        if (optionalUser != null) {
-            val user = optionalUser!!
-
+        val user = userViewModel.loggedInUser.value
+        if (user != null) {
             // set full name
             if (user.fullName != null) {
                 textViewMyDashboard.text = "Welcome, ${user.fullName}"
@@ -85,7 +78,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.cardViewProfile -> {
-                if (!LoginSession.getInstance(this).isLoggedIn()) {
+                if (!userViewModel.isLoggedIn()) {
                     Toast.makeText(this, "User must be logged in", Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -102,7 +95,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.cardViewWeather -> {
-                if (!LoginSession.getInstance(this).isLoggedIn()) {
+                if (!userViewModel.isLoggedIn()) {
                     Toast.makeText(this, "User must be logged in", Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -116,7 +109,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             R.id.cardViewLogout -> {
                 Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
 
-                LoginSession.getInstance(applicationContext).logout()
+                userViewModel.logout()
                 finish()
                 startActivity(Intent(this, MainActivity::class.java))
             }

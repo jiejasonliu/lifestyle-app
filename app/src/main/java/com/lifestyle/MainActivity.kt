@@ -1,6 +1,5 @@
 package com.lifestyle
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -8,7 +7,8 @@ import android.widget.EditText
 import android.widget.Toast
 import android.content.Intent
 import android.view.View
-import com.lifestyle.models.LoginSession
+import androidx.activity.viewModels
+import com.lifestyle.viewmodels.UserViewModel
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var devHomeButton: Button
     private lateinit var username: EditText
     private lateinit var password: EditText
+
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +41,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         passwordTextView.isFocusable = false
 
         // login and redirect if a previous login was found
-        val loginSession = LoginSession.getInstance(this)
-        if (loginSession.isLoggedIn() && loginSession.getLoggedInUser() != null) {
-            finishAndLogin(loginSession.getLoggedInUser()!!.username)
+        if (userViewModel.isLoggedIn()) {
+            finishAndLogin(userViewModel.loggedInUser.value!!.username)
         }
     }
 
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 // todo: hacky way to login since we don't have authentication yet
                 // check if "username" field for that username is filled, otherwise this wasn't a user
-                if (!LoginSession.getInstance(this).doesUserExist(username)) {
+                if (!userViewModel.doesUserExist(username)) {
                     Toast.makeText(this, "No profile was found with that username", Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // login, pop MainActivity from back stack, and redirect to HomeActivity
     private fun finishAndLogin(username: String) {
-        LoginSession.getInstance(this).login(username)
+        userViewModel.login(username)
         finish()
         startActivity(Intent(this, HomeActivity::class.java))
     }
