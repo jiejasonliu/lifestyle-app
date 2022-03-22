@@ -93,6 +93,14 @@ class WeatherFragment: Fragment() {
                 updateWeather(weatherData)
             }
         }
+
+        weatherViewModel.hourlyLiveData.observe(requireActivity()) {
+            println("(WeatherFragment) Observer callback for: hourlyLiveData")
+            val hourlyData = weatherViewModel.hourlyLiveData.value
+            if (hourlyData != null) {
+                setHourlyWeather(hourlyData)
+            }
+        }
     }
 
     fun updateWeather(results: Map<String, String>) {

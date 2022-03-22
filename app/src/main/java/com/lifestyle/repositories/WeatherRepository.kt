@@ -20,6 +20,7 @@ import kotlin.math.roundToInt
 class WeatherRepository private constructor(private val appContext: Context)  {
 
     var currentWeatherData = MutableLiveData<Map<String, String>?>()
+    var hourlyWeatherData = MutableLiveData<JSONObject?>()
     private var lat: Float? = null
     private var long: Float? = null
 
@@ -84,6 +85,7 @@ class WeatherRepository private constructor(private val appContext: Context)  {
             withContext(Dispatchers.IO) {
                 // Call Openweathermaps API
                 val data = downloadUrl(stringUrl)
+                hourlyWeatherData.postValue(JSONObject(data))
 
                 // Parse the response
                 val results = parseWeatherResponse(JSONObject(data))
