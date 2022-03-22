@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.activityViewModels
 import com.lifestyle.*
-import com.lifestyle.models.LoginSession
+import com.lifestyle.viewmodels.UserViewModel
 
 class SideBarFragment : Fragment(), View.OnClickListener {
 
@@ -19,6 +20,8 @@ class SideBarFragment : Fragment(), View.OnClickListener {
     lateinit var cardViewWeatherTablet: CardView
     lateinit var cardViewSettingsTablet: CardView
     lateinit var cardViewHomeTablet: CardView
+
+    private val userViewModel: UserViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +52,7 @@ class SideBarFragment : Fragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.cardViewProfileTablet -> {
-                if (!LoginSession.getInstance(requireContext()).isLoggedIn()) {
+                if (!userViewModel.isLoggedIn()) {
                     Toast.makeText(requireActivity(), "User must be logged in", Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -66,7 +69,7 @@ class SideBarFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.cardViewWeatherTablet -> {
-                if (!LoginSession.getInstance(requireContext()).isLoggedIn()) {
+                if (!userViewModel.isLoggedIn()) {
                     Toast.makeText(requireActivity(), "User must be logged in", Toast.LENGTH_SHORT).show()
                     return
                 }

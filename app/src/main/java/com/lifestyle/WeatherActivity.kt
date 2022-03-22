@@ -1,16 +1,14 @@
 package com.lifestyle
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.lifestyle.fragments.WeatherFragment
-import com.lifestyle.models.LoginSession
-import com.lifestyle.models.StoredUser
+import androidx.activity.viewModels
+import com.lifestyle.viewmodels.UserViewModel
 
 class WeatherActivity : AppCompatActivity() {
-    private lateinit var weatherFragment: WeatherFragment
-    private var user: StoredUser? = null
+
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,12 +16,19 @@ class WeatherActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        user = LoginSession.getInstance(this).getLoggedInUser()
+        // bind observers from view models
+        bindObservers()
+    }
 
-        if (savedInstanceState == null) {
-            if (user == null) {
+    private fun bindObservers() {
+        // user data changed
+        userViewModel.loggedInUser.observe(this) {
+            println("(WeatherActivity) Observer callback for: userViewModel.loggedInUser")
+
+            // user was NOT logged in
+            if (userViewModel.loggedInUser == null) {
+                Toast.makeText(this, "User session expired", Toast.LENGTH_SHORT).show()
                 finish()
-                return
             }
         }
     }

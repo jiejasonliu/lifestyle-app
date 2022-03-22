@@ -1,6 +1,8 @@
 package com.lifestyle
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -8,15 +10,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
-import com.lifestyle.models.LoginSession
-import com.lifestyle.models.StoredUser
-import com.lifestyle.viewmodels.ProfileFormViewModel
+import com.lifestyle.models.PartialUserProfile
+import com.lifestyle.models.UserProfileEntity
 import com.lifestyle.viewmodels.UserViewModel
-import java.text.DecimalFormat
 
-class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener {
+class FitnessActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var textInputWeight: TextInputEditText
     private lateinit var textInputHeightFt: TextInputEditText
@@ -34,17 +33,16 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
     private lateinit var textViewTargetCalories: TextView
 
     private val userViewModel: UserViewModel by viewModels()
-    private val profileFormViewModel: ProfileFormViewModel by viewModels()
 
-    private var optionalUser: StoredUser? = null    // initialized in onCreate
     private var usersSex: String = "M" // Default to male
     private var usersAge: Int = 20 // Default to 20 years old
+
+    private var weightChangeWatcherRegistered = false
+    private var suppressWeightChangeWatcher = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bmi)
-
-        optionalUser = LoginSession.getInstance(this).getLoggedInUser()
 
         // Gather view objects
         textInputWeight = findViewById(R.id.textInputEditTextWeight)
@@ -70,11 +68,6 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
         buttonActive.setOnClickListener(this)
         buttonNotActive.setOnClickListener(this)
 
-        // Register change listeners
-        // I couldnt get this to work
-        // Values wont update when they change their "weight change" goal
-        editTextWeightChange.setOnFocusChangeListener(this);
-
         // bind observers from view models
         bindObservers()
 
@@ -89,39 +82,32 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
 
             // check if a user is logged in
             if (userViewModel.loggedInUser != null) {
-                profileFormViewModel.updateFormFull(userViewModel.loggedInUser.value!!)
+                fillWithUserData()
             }
             // user was NOT logged in
             else {
                 Toast.makeText(this, "User session expired", Toast.LENGTH_SHORT).show()
             }
-            profileFormViewModel.updateFormFull(userViewModel.loggedInUser.value!!)
-            fillWithUserData()
-        }
 
-        // form validation occurred
-        profileFormViewModel.validationResult.observe(this) {
-            println("(FitnessActivity) Observer callback for: profileFormViewModel.validationResult")
-
-            val result = profileFormViewModel.validationResult.value ?: return@observe
-
-            // error when validating
-            if (!result.success || result.partialUserProfile == null) {
-                Toast.makeText(this, result.firstError, Toast.LENGTH_SHORT).show()
-            }
-            // success! apply changes to UserViewModel
-            else {
-                userViewModel.updateUserProfilePartial(result.partialUserProfile)
-                Toast.makeText(this, "Changes were applied!", Toast.LENGTH_SHORT).show()
+            // Register change listeners
+            if (!weightChangeWatcherRegistered) {
+                editTextWeightChange.addTextChangedListener(weightChangeTextWatcher);
+                weightChangeWatcherRegistered = true
             }
         }
     }
 
     private fun fillWithUserData() {
-        // Set height and weight from user's info
-        if(optionalUser != null) {
-            val user = userViewModel.loggedInUser.value
+        suppressWeightChangeWatcher = true
 
+        // reset all buttons
+        buttonLoseWeight.isSelected = false
+        buttonMaintainWeight.isSelected = false
+        buttonGainWeight.isSelected = false
+
+        // Set height and weight from user's info
+        val user = userViewModel.loggedInUser.value
+        if(user != null) {
             if (!user?.sex.isNullOrBlank())
                 usersSex = user?.sex!!
 
@@ -157,86 +143,92 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
 
                 // Set calculations if they have weight and height
                 if (user.weight != null)
-                    updateCalculations()
+                    updateCalculations(false)   // only update UI not user
             }
         }
+
+        suppressWeightChangeWatcher = false
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.buttonUpdate -> {
-                profileFormViewModel.validateFormFields()   // -> validationResult.observe callback (see in bindObservers())
-                updateCalculations()
+                updateCalculations(true)
             }
             R.id.buttonLoseWeight -> {
                 buttonLoseWeight.isSelected = true
                 buttonMaintainWeight.isSelected = false
                 buttonGainWeight.isSelected = false
                 textViewLoseOrGain.setText("I want to lose")
-                updateCalculations()
+                updateCalculations(false)
             }
             R.id.buttonMaintainWeight -> {
                 buttonLoseWeight.isSelected = false
                 buttonMaintainWeight.isSelected = true
                 buttonGainWeight.isSelected = false
                 editTextWeightChange.setText("0")
-                updateCalculations()
+                updateCalculations(false)
             }
             R.id.buttonGainWeight -> {
                 buttonLoseWeight.isSelected = false
                 buttonMaintainWeight.isSelected = false
                 buttonGainWeight.isSelected = true
                 textViewLoseOrGain.setText("I want to gain")
-                updateCalculations()
+                updateCalculations(false)
             }
             R.id.buttonActive -> {
                 buttonActive.isSelected = true
                 buttonNotActive.isSelected = false
-                updateCalculations()
+                updateCalculations(false)
             }
             R.id.buttonNotActive -> {
                 buttonActive.isSelected = false
                 buttonNotActive.isSelected = true
-                updateCalculations()
+                updateCalculations(false)
             }
         }
     }
 
-    fun updateCalculations()
+    // @param updateUserProfile - true if we should take fields and update user in DB
+    fun updateCalculations(shouldUpdateUserProfile: Boolean)
     {
         if(textInputWeight.text.toString() == "") {
             showErrorNullValue("weight")
             return
         }
-        val weight : Int = textInputWeight.text.toString().toInt()
 
         if(textInputHeightFt.text.toString() == "") {
             showErrorNullValue("height ft")
             return
         }
-        val heightFt = textInputHeightFt.text.toString().toInt()
 
         if(textInputHeightIn.text.toString() == "") {
             showErrorNullValue("height in")
             return
         }
-        val heightIn = textInputHeightIn.text.toString().toInt()
 
         val isActive = buttonActive.isSelected
+        val weight : Int = textInputWeight.text.toString().toInt()
+        val heightFt = textInputHeightFt.text.toString().toInt()
+        val heightIn = textInputHeightIn.text.toString().toInt()
         var weightChange = editTextWeightChange.text.toString().toInt()
 
         if(weightChange > 2) {
             Toast.makeText(this, "You shouldn't try and change weight by more than 2 pounds in a week.", Toast.LENGTH_LONG).show()
         }
 
-        if(buttonLoseWeight.isSelected)
-            weightChange *= -1
-
         // Update user profile
-        if(optionalUser != null) {
-            val user = StoredUser(this, optionalUser?.username.toString())
+        val user = userViewModel.loggedInUser.value
+        if(user != null && shouldUpdateUserProfile) {
+            val weight : Int = textInputWeight.text.toString().toInt()
+            val heightFt = textInputHeightFt.text.toString().toInt()
+            val heightIn = textInputHeightIn.text.toString().toInt()
+            var weightChange = editTextWeightChange.text.toString().toInt()
             updateUser(user, weight, heightFt, heightIn, weightChange)
         }
+
+        if(buttonLoseWeight.isSelected)
+            weightChange *= -1
 
         if(usersSex.equals("F"))
             updateCaloriesForFemale(weight, heightFt, heightIn, usersAge, weightChange, isActive)
@@ -244,15 +236,17 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
             updateCaloriesForMale(weight, heightFt, heightIn, usersAge, weightChange, isActive)
     }
 
-    fun updateUser(user: StoredUser, weight: Int, heightFt:Int, heightIn: Int, weightChange: Int) {
+    fun updateUser(user: UserProfileEntity, weight: Int, heightFt:Int, heightIn: Int, weightChange: Int) {
         var height: Int? = null
         if (heightFt != null && heightIn != null) {
             height = (12 * heightFt) + heightIn
         }
 
-        user.weight = weight
-        user.height = height
-        user.weightChange = weightChange
+        userViewModel.updateUserProfilePartial(PartialUserProfile(user.username).apply {
+            this.weight = weight
+            this.height = height
+            this.weightChange = weightChange
+        })
     }
 
     fun updateCaloriesForMale(weight: Int, heightFt: Int, heightIn: Int, age: Int, weightChange: Int, isActive: Boolean) {
@@ -315,18 +309,20 @@ class FitnessActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusC
         Toast.makeText(this, "Please fill in the " + value + " field.", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onFocusChange(view: View?, hasFocus: Boolean) {
-        if(!hasFocus) {
-            when (view?.id) {
-                R.id.editTextWeightChange -> {
-                    if(editTextWeightChange.text.toString() != "0") {
-                        if(buttonMaintainWeight.isSelected)
-                            Toast.makeText(this, "Select gain or lose weight", Toast.LENGTH_SHORT).show()
-                        else
-                            updateCalculations()
-                    } else
-                        updateCalculations()
+
+    val weightChangeTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun afterTextChanged(p0: Editable?) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            if (suppressWeightChangeWatcher) {
+                return
+            }
+
+            if (s != null && s.isNotEmpty()) {
+                if(buttonMaintainWeight.isSelected) {
+                    Toast.makeText(this@FitnessActivity, "Select gain or lose weight", Toast.LENGTH_SHORT).show()
                 }
+                updateCalculations(true)
             }
         }
     }

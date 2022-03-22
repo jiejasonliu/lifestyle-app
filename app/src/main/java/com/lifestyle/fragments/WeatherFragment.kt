@@ -8,31 +8,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.maps.GoogleMap
 import com.lifestyle.helpers.HourlyWeatherAdaptor
 import com.lifestyle.R
-import com.lifestyle.models.LoginSession
-import com.lifestyle.models.StoredUser
-import com.lifestyle.viewmodels.HikingViewModel
+import com.lifestyle.models.UserProfileEntity
 import com.lifestyle.viewmodels.UserViewModel
 import com.lifestyle.viewmodels.WeatherViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.math.roundToInt
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,8 +35,8 @@ class WeatherFragment: Fragment() {
     private lateinit var hourlyWeatherAdaptor: HourlyWeatherAdaptor
     private var hourlyWeatherItems = ArrayList<Triple<String, String, String>>()
 
-    private val weatherViewModel: WeatherViewModel by viewModels()
-    private val userViewModel: UserViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by activityViewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
 
     companion object {
         private var userCity: String? = null
@@ -80,7 +66,7 @@ class WeatherFragment: Fragment() {
         recyclerHourlyWeather.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerHourlyWeather.adapter = hourlyWeatherAdaptor
 
-        val user: StoredUser? = userViewModel.loggedInUser.value
+        val user: UserProfileEntity? = userViewModel.loggedInUser.value
         if (user != null) {
             if (user.city.isNullOrEmpty()) {
                 Toast.makeText(activity, "Please update location information", Toast.LENGTH_SHORT).show()
@@ -100,7 +86,7 @@ class WeatherFragment: Fragment() {
 
     private fun bindObservers() {
         // API response received
-        weatherViewModel.weatherLiveData.observe(this) {
+        weatherViewModel.weatherLiveData.observe(requireActivity()) {
             println("(WeatherFragment) Observer callback for: weatherLiveData")
             val weatherData = weatherViewModel.weatherLiveData.value
             if (weatherData != null) {

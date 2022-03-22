@@ -7,6 +7,7 @@ import com.lifestyle.interfaces.IUserProfile
 /**
  * @param _username this must be unique for each user; used as a key to the user's SharedPreference
  */
+@Deprecated(message="Use Room entity `UserProfileEntity` retrieved from UserViewModel::loggedInUser")
 class StoredUser(private val appContext: Context, private val _username: String) : IUserProfile {
 
     private val sharedPreferences: SharedPreferences =
