@@ -7,8 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import com.lifestyle.interfaces.IUserProfile
 import com.lifestyle.models.PartialUserProfile
 import com.lifestyle.models.PartialUserProfile.Companion.shouldIncludeInUpdate
-import com.lifestyle.models.StoredUser
+import com.lifestyle.models.UserProfileEntity
 import com.lifestyle.repositories.LoginRepository
+import com.lifestyle.repositories.UserProfileRepository
 
 // extend from AndroidViewModel() instead of ViewModel() since we need a reference to Context
 class UserViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,9 +18,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     @SuppressLint("StaticFieldLeak")
     private var appContext = application.applicationContext
     private var loginRepository: LoginRepository = LoginRepository.getInstance(appContext)
+    private var userProfileRepository = UserProfileRepository.getInstance(appContext)
 
     // if there is no logged in user, user.value will be null
-    var loggedInUser = MutableLiveData<StoredUser?>()
+    var loggedInUser = MutableLiveData<UserProfileEntity?>()
 
     init {
         fetchUser()
@@ -36,15 +38,19 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun doesUserExist(username: String): Boolean {
-        return loginRepository.doesUserExist(username)
+        return userProfileRepository.doesUserExistBlocking(username)
     }
 
     fun login(username: String) {
         loginRepository.login(username)
     }
 
-    fun logout(username: String) {
+    fun logout() {
         loginRepository.logout()
+    }
+
+    fun isLoggedIn(): Boolean {
+        return this.loggedInUser.value != null
     }
 
     /**
@@ -60,49 +66,44 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
      *    });
      */
     fun updateUserProfilePartial(profile: PartialUserProfile) {
-        val loggedInUser: StoredUser? = loggedInUser.value
-
-        // user must be logged in
+        val loggedInUser: IUserProfile? = loggedInUser.value
         if (loggedInUser != null) {
-            // only write to user profile if the data was actually touched (updated)
-            if (profile.fullName.shouldIncludeInUpdate()) loggedInUser.fullName = profile.fullName
-            if (profile.age.shouldIncludeInUpdate()) loggedInUser.age = profile.age
-            if (profile.city.shouldIncludeInUpdate()) loggedInUser.city = profile.city
-            if (profile.state.shouldIncludeInUpdate()) loggedInUser.state = profile.state
-            if (profile.country.shouldIncludeInUpdate()) loggedInUser.country = profile.country
-            if (profile.sex.shouldIncludeInUpdate()) loggedInUser.sex = profile.sex
-            if (profile.weight.shouldIncludeInUpdate()) loggedInUser.weight = profile.weight
-            if (profile.height.shouldIncludeInUpdate()) loggedInUser.height = profile.height
-            if (profile.pictureURI.shouldIncludeInUpdate()) loggedInUser.pictureURI = profile.pictureURI
-            if (profile.weightChange.shouldIncludeInUpdate()) loggedInUser.weightChange = profile.weightChange
+            val userProfile = UserProfileEntity(
+                username = profile.username ?: loggedInUser.username ?: "",
+                fullName = if (profile.fullName.shouldIncludeInUpdate()) profile.fullName else loggedInUser.fullName,
+                age = if (profile.age.shouldIncludeInUpdate()) profile.age else loggedInUser.age,
+                city = if (profile.city.shouldIncludeInUpdate()) profile.city else loggedInUser.city,
+                state = if (profile.state.shouldIncludeInUpdate()) profile.state else loggedInUser.state,
+                country = if (profile.country.shouldIncludeInUpdate()) profile.country else loggedInUser.country,
+                sex = if (profile.sex.shouldIncludeInUpdate()) profile.sex else loggedInUser.sex,
+                weight = if (profile.weight.shouldIncludeInUpdate()) profile.weight else loggedInUser.weight,
+                height = if (profile.height.shouldIncludeInUpdate()) profile.height else loggedInUser.height,
+                pictureURI = if (profile.pictureURI.shouldIncludeInUpdate()) profile.pictureURI else loggedInUser.pictureURI,
+                weightChange = if (profile.weightChange.shouldIncludeInUpdate())  profile.weightChange else loggedInUser.weightChange,
+            )
 
-            // notify changes
-            this.loggedInUser.postValue(this.loggedInUser.value)
+            // update and notify changes
+            userProfileRepository.updateUser(userProfile)
+            loginRepository.fetchLoggedInUser()
         }
     }
 
-    /**
-     * Completely replace stored user with the specified user profile.
-     */
-    fun updateUserProfileFull(profile: IUserProfile) {
-        val loggedInUser: StoredUser? = loggedInUser.value
+    fun addNewUser(username: String) {
+        userProfileRepository.insertUser(UserProfileEntity(
+            username = username,
+            fullName = null,
+            age = null,
+            city = null,
+            state = null,
+            country = null,
+            height = null,
+            weight = null,
+            sex = null,
+            pictureURI = null,
+            weightChange = null,
+        ))
 
-        // user must be logged in
-        if (loggedInUser != null) {
-            // write to user profile regardless if settings were touched
-            loggedInUser.fullName = profile.fullName
-            loggedInUser.age = profile.age
-            loggedInUser.city = profile.city
-            loggedInUser.state = profile.state
-            loggedInUser.country = profile.country
-            loggedInUser.sex = profile.sex
-            loggedInUser.weight = profile.weight
-            loggedInUser.height = profile.height
-            loggedInUser.pictureURI = profile.pictureURI
-            loggedInUser.weightChange = profile.weightChange
-
-            // notify changes
-            this.loggedInUser.postValue(this.loggedInUser.value)
-        }
+        // notify changes
+        loginRepository.fetchLoggedInUser()
     }
 }
