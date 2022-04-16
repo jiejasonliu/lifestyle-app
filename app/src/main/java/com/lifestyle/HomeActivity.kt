@@ -35,7 +35,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     private var accelerationPrevious: Double = 9.809989073394384 // gravity
     private var accelerationLowCutFilter: Float = 0f
     private var shakeThreshold: Float = 8f
-
+    private var timeThreshold: Long = 1000
+    private var prevTime: Long = System.currentTimeMillis()
+    private var shakeCount: Int = 0
+    private var shakeCountThreshold: Int = 2
 
     private val userViewModel: UserViewModel by viewModels()
 
@@ -143,7 +146,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
 
     override fun onResume() {
         super.onResume()
+        mSensorManager.flush(this)
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        shakeCount = 0
+        accelerationCurrent = 9.809989073394384
+        accelerationPrevious = 9.809989073394384
+        accelerationLowCutFilter = 0.0f
     }
 
     override fun onPause() {
@@ -152,19 +160,31 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     }
 
     override fun onSensorChanged(p0: SensorEvent) {
-        val x = p0.values[0]
-        val y = p0.values[1]
-        val z = p0.values[2]
+        var currTime = System.currentTimeMillis()
 
-        // normalize calculate magnitude of vector
-        accelerationCurrent = sqrt((x*x + y*y + z*z).toDouble())
-        val accelerationDelta = abs(accelerationCurrent-accelerationPrevious).toFloat()
-        accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
-        if (accelerationLowCutFilter > shakeThreshold) {
-            Toast.makeText(this, "Settings Clicked", Toast.LENGTH_SHORT).show()
-            // TODO: Start step counter intent
+        if ((currTime - prevTime) > timeThreshold) {
+            shakeCount += 1
+            prevTime = currTime
+
+            val x = p0.values[0]
+            val y = p0.values[1]
+            val z = p0.values[2]
+
+            // normalize calculate magnitude of vector
+            accelerationCurrent = sqrt((x*x + y*y + z*z).toDouble())
+            val accelerationDelta = abs(accelerationCurrent-accelerationPrevious).toFloat()
+            accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
+            accelerationPrevious = accelerationCurrent
+            if (accelerationLowCutFilter > shakeThreshold && shakeCount > shakeCountThreshold) {
+                accelerationCurrent = 9.809989073394384
+                accelerationPrevious = 9.809989073394384
+                accelerationLowCutFilter = 0.0f
+                mSensorManager.flush(this)
+                // startActivity(Intent(this, StepCounterActivity::class.java))
+                // TODO: Start tracking steps
+                Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
+            }
         }
-        accelerationPrevious = accelerationCurrent
     }
 
     override fun onAccuracyChanged(p0: Sensor, p1: Int) {
