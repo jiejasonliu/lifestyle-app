@@ -32,4 +32,9 @@ class PartialUserProfile constructor(_username: String) : IUserProfile {
     override var sex: String? = DEFAULT_IGNORE_STRING
     override var pictureURI: String? = DEFAULT_IGNORE_STRING
     override var weightChange: Int? = DEFAULT_IGNORE_INT
+    override var stepGoal: Int? = DEFAULT_IGNORE_INT
+    override var totalSteps: Int? = DEFAULT_IGNORE_INT
+    override var todaysSteps: Int? = DEFAULT_IGNORE_INT
+    override var dateOfTodaysSteps: Int? = DEFAULT_IGNORE_INT
+
 }

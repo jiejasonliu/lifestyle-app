@@ -127,7 +127,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
             }
 
             R.id.cardViewSettings -> {
-                Toast.makeText(this, "Settings Clicked", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, StepCounterActivity::class.java))
             }
 
             R.id.cardViewLogout -> {

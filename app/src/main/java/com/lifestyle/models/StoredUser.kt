@@ -69,6 +69,22 @@ class StoredUser(private val appContext: Context, private val _username: String)
             if (v != null) putIntAsync("weightChange", v)
         }
 
+    override var stepGoal: Int?
+        get() = getNullableInt(sharedPreferences.getInt("stepGoal", 0), 0)
+        set(v) = putIntAsync("stepGoal", v)
+
+    override var totalSteps: Int?
+        get() = getNullableInt(sharedPreferences.getInt("totalSteps", 0), 0)
+        set(v) = putIntAsync("totalSteps", v)
+
+    override var todaysSteps: Int?
+        get() = getNullableInt(sharedPreferences.getInt("todaysSteps", 0), 0)
+        set(v) = putIntAsync("todaysSteps", v)
+
+    override var dateOfTodaysSteps: Int?
+        get() = getNullableInt(sharedPreferences.getInt("dateOfTodaysSteps", 0), 0)
+        set(v) = putIntAsync("dateOfTodaysSteps", v)
+
     private fun getNullableInt(value: Int, sentinelValue: Int): Int? {
         if (value == sentinelValue)
             return null
