@@ -30,6 +30,14 @@ data class UserProfileEntity(
 
     @ColumnInfo(name="weightChange") override val weightChange: Int?,
 
+    @ColumnInfo(name="stepGoal") override val stepGoal: Int?,
+
+    @ColumnInfo(name="totalSteps") override val totalSteps: Int?,
+
+    @ColumnInfo(name = "todaysSteps") override val todaysSteps: Int?,
+
+    @ColumnInfo(name = "dateOfTodaysSteps") override val dateOfTodaysSteps: Int?
+
     // extras
     // @ColumnInfo(name="loggedIn", defaultValue="false") val loggedIn: Boolean = false,
 ) : IUserProfile

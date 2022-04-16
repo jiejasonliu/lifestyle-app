@@ -14,4 +14,8 @@ interface IUserProfile {
     val sex: String?
     val pictureURI: String?
     val weightChange: Int?
+    val stepGoal: Int?
+    val totalSteps: Int?
+    val todaysSteps: Int?
+    val dateOfTodaysSteps: Int? // Just store the day of the month
 }

@@ -282,7 +282,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_settings_64" />
+                    app:srcCompat="@drawable/ic_baseline_directions_walk_24" />
 
                 <!--Settings Text-->
                 <TextView
@@ -290,7 +290,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Settings"
+                    android:text="Step Counter"
                     android:textColor="@color/black" />
 
             </LinearLayout>

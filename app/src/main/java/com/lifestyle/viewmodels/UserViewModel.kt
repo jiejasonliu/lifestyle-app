@@ -10,6 +10,7 @@ import com.lifestyle.models.PartialUserProfile.Companion.shouldIncludeInUpdate
 import com.lifestyle.models.UserProfileEntity
 import com.lifestyle.repositories.LoginRepository
 import com.lifestyle.repositories.UserProfileRepository
+import java.time.LocalDateTime
 
 // extend from AndroidViewModel() instead of ViewModel() since we need a reference to Context
 class UserViewModel(application: Application) : AndroidViewModel(application) {
@@ -80,7 +81,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 height = if (profile.height.shouldIncludeInUpdate()) profile.height else loggedInUser.height,
                 pictureURI = if (profile.pictureURI.shouldIncludeInUpdate()) profile.pictureURI else loggedInUser.pictureURI,
                 weightChange = if (profile.weightChange.shouldIncludeInUpdate())  profile.weightChange else loggedInUser.weightChange,
-            )
+                stepGoal = if (profile.stepGoal.shouldIncludeInUpdate()) profile.stepGoal else loggedInUser.stepGoal,
+                totalSteps = if (profile.totalSteps.shouldIncludeInUpdate()) profile.totalSteps else loggedInUser.totalSteps,
+                todaysSteps = if (profile.todaysSteps.shouldIncludeInUpdate()) profile.todaysSteps else loggedInUser.todaysSteps,
+                dateOfTodaysSteps = if (profile.dateOfTodaysSteps.shouldIncludeInUpdate()) profile.dateOfTodaysSteps else loggedInUser.dateOfTodaysSteps
+                )
 
             // update and notify changes
             userProfileRepository.updateUser(userProfile)
@@ -101,6 +106,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             sex = null,
             pictureURI = null,
             weightChange = null,
+            stepGoal = null,
+            totalSteps = null,
+            todaysSteps = null,
+            dateOfTodaysSteps = null
         ))
 
         // notify changes
