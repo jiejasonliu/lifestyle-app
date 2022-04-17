@@ -1,9 +1,6 @@
 package com.lifestyle
 
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -14,12 +11,8 @@ import androidx.activity.viewModels
 import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
 import com.lifestyle.viewmodels.UserViewModel
-import android.hardware.SensorManager
-import kotlin.math.abs
-import kotlin.math.sqrt
 
-
-class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListener {
+class HomeActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var cardViewProfile: CardView
     lateinit var cardViewBmi: CardView
     lateinit var cardViewHiking: CardView
@@ -28,17 +21,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     lateinit var cardViewLogout: CardView
     lateinit var imageViewProfilePicture: ImageView
     lateinit var textViewMyDashboard: TextView
-
-    private lateinit var mSensorManager: SensorManager
-    private lateinit var mAccelerometer: Sensor
-    private var accelerationCurrent: Double = 9.809989073394384 // gravity
-    private var accelerationPrevious: Double = 9.809989073394384 // gravity
-    private var accelerationLowCutFilter: Float = 0f
-    private var shakeThreshold: Float = 8f
-    private var timeThreshold: Long = 1000
-    private var prevTime: Long = System.currentTimeMillis()
-    private var shakeCount: Int = 0
-    private var shakeCountThreshold: Int = 2
 
     private val userViewModel: UserViewModel by viewModels()
 
@@ -68,15 +50,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
         cardViewWeather.setOnClickListener(this)
         cardViewSettings.setOnClickListener(this)
         cardViewLogout.setOnClickListener(this)
-
-        // initialize sensors
-        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        if (mAccelerometer != null) {
-            // Success! There's a ACCELEROMETER).
-        } else {
-            // Failure! No ACCELEROMETER).
-        }
     }
 
     private fun bindObservers() {
@@ -142,52 +115,4 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
             }
         }
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        mSensorManager.flush(this)
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        shakeCount = 0
-        accelerationCurrent = 9.809989073394384
-        accelerationPrevious = 9.809989073394384
-        accelerationLowCutFilter = 0.0f
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mSensorManager.unregisterListener(this);
-    }
-
-    override fun onSensorChanged(p0: SensorEvent) {
-        var currTime = System.currentTimeMillis()
-
-        if ((currTime - prevTime) > timeThreshold) {
-            shakeCount += 1
-            prevTime = currTime
-
-            val x = p0.values[0]
-            val y = p0.values[1]
-            val z = p0.values[2]
-
-            // normalize calculate magnitude of vector
-            accelerationCurrent = sqrt((x*x + y*y + z*z).toDouble())
-            val accelerationDelta = abs(accelerationCurrent-accelerationPrevious).toFloat()
-            accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
-            accelerationPrevious = accelerationCurrent
-            if (accelerationLowCutFilter > shakeThreshold && shakeCount > shakeCountThreshold) {
-                accelerationCurrent = 9.809989073394384
-                accelerationPrevious = 9.809989073394384
-                accelerationLowCutFilter = 0.0f
-                mSensorManager.flush(this)
-                // startActivity(Intent(this, StepCounterActivity::class.java))
-                // TODO: Start tracking steps
-                Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onAccuracyChanged(p0: Sensor, p1: Int) {
-    }
-
 }
