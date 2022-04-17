@@ -46,9 +46,6 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var mediaPlayer: MediaPlayer
     private var trackingSteps: Boolean = false
 
-    private var totalSteps: Float = 0f
-    private var prevSteps: Float = 0f
-
     private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,13 +88,13 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), 1)
         }
 
-        if (mSensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) == null) {
+        if (mSensorManager?.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) == null) {
             // Failure! No STEP COUNTER)
             Toast.makeText(this, "No step counter sensor", Toast.LENGTH_SHORT).show()
             finish()
         }
         else {
-            mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+            mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
         }
     }
 
@@ -144,7 +141,6 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
 
                 updateProgressBar(user.todaysSteps.toString().toInt(), user.stepGoal.toString().toInt())
             }
-
         }
     }
 
@@ -160,14 +156,14 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     private fun updateProgressBar(todaysSteps:Int, stepGoal: Int) {
 
         if(todaysSteps == 0) {
-            progressBar.progress = 0
+            progressBar.apply { setProgress(0, true) }
         }
         else if(stepGoal == 0 || todaysSteps > stepGoal)
         {
-            progressBar.progress = 100
+            progressBar.apply { setProgress(100, true) }
         }
         else {
-            progressBar.progress = todaysSteps / stepGoal
+            progressBar.apply { setProgress(((todaysSteps / stepGoal.toDouble())*100).toInt(), true) }
         }
 
     }
@@ -190,16 +186,21 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(p0: SensorEvent) {
-        if (p0.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-            // SENSOR == TYPE_STEP_COUNTER
+        if (p0.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
+            // SENSOR == TYPE_STEP_DETECTOR
             if (trackingSteps) {
-                totalSteps = p0.values[0]
-                val currSteps = totalSteps.toInt() - prevSteps.toInt()
-                textViewTodaysSteps.text = ("$currSteps")
-                progressBar.apply { setProgress(currSteps.toInt(), true) }
+                Toast.makeText(this, "Inside if statement", Toast.LENGTH_SHORT).show()
+                // DB storage
+                val user = userViewModel.loggedInUser.value
+                if(user != null) {
+                    userViewModel.updateUserProfilePartial(PartialUserProfile(user.username).apply {
+                        this.totalSteps = (user.totalSteps ?: 0) + 1
+                        this.todaysSteps = (user.todaysSteps ?: 0) + 1
+                    })
+                }
             }
         }
-        else {
+        else if (p0.sensor.type == Sensor.TYPE_ACCELEROMETER) {
             // SENSOR == TYPE_ACCELEROMETER
             var currTime = System.currentTimeMillis()
 
@@ -247,6 +248,8 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
                     }
                 }
             }
+        } else {
+            null
         }
     }
 
