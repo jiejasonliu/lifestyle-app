@@ -189,7 +189,6 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
         if (p0.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
             // SENSOR == TYPE_STEP_DETECTOR
             if (trackingSteps) {
-                Toast.makeText(this, "Inside if statement", Toast.LENGTH_SHORT).show()
                 // DB storage
                 val user = userViewModel.loggedInUser.value
                 if(user != null) {
