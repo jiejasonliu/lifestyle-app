@@ -1,5 +1,8 @@
 package com.lifestyle
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -9,6 +12,8 @@ import android.os.Bundle
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.lifestyle.models.PartialUserProfile
 import com.lifestyle.models.UserProfileEntity
 import com.lifestyle.viewmodels.UserViewModel
@@ -28,6 +33,7 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var mSensorManager: SensorManager
     private lateinit var mAccelerometer: Sensor
+    private lateinit var mStepCounter: Sensor
     private var accelerationCurrent: Double = 9.809989073394384 // gravity
     private var accelerationPrevious: Double = 9.809989073394384 // gravity
     private var accelerationLowCutFilter: Float = 0f
@@ -39,6 +45,9 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var mediaPlayer: MediaPlayer
     private var trackingSteps: Boolean = false
+
+    private var totalSteps: Float = 0f
+    private var prevSteps: Float = 0f
 
     private val userViewModel: UserViewModel by viewModels()
 
@@ -73,12 +82,22 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
         }
 
         // initialize sensors
-        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        if (mAccelerometer != null) {
-            // Success! There's a ACCELEROMETER).
-        } else {
-            // Failure! No ACCELEROMETER).
+        println(mSensorManager.getSensorList(Sensor.TYPE_ALL))
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
+            //ask for permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), 1)
+        }
+
+        if (mSensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) == null) {
+            // Failure! No STEP COUNTER)
+            Toast.makeText(this, "No step counter sensor", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+        else {
+            mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         }
     }
 
@@ -156,7 +175,9 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         mSensorManager.flush(this)
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_UI)
+
         shakeCount = 0
         accelerationCurrent = 9.809989073394384
         accelerationPrevious = 9.809989073394384
@@ -165,55 +186,65 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
-        mSensorManager.unregisterListener(this);
+        mSensorManager.unregisterListener(this)
     }
 
     override fun onSensorChanged(p0: SensorEvent) {
-        var currTime = System.currentTimeMillis()
+        if (p0.sensor.type == Sensor.TYPE_STEP_COUNTER) {
+            // SENSOR == TYPE_STEP_COUNTER
+            if (trackingSteps) {
+                totalSteps = p0.values[0]
+                val currSteps = totalSteps.toInt() - prevSteps.toInt()
+                textViewTodaysSteps.text = ("$currSteps")
+                progressBar.apply { setProgress(currSteps.toInt(), true) }
+            }
+        }
+        else {
+            // SENSOR == TYPE_ACCELEROMETER
+            var currTime = System.currentTimeMillis()
 
-        if ((currTime - prevTime) > timeThreshold) {
-            shakeCount += 1
-            prevTime = currTime
+            if ((currTime - prevTime) > timeThreshold) {
+                shakeCount += 1
+                prevTime = currTime
 
-            val x = p0.values[0]
-            val y = p0.values[1]
-            val z = p0.values[2]
+                val x = p0.values[0]
+                val y = p0.values[1]
+                val z = p0.values[2]
 
-            // normalize calculate magnitude of vector
-            accelerationCurrent = sqrt((x*x + y*y + z*z).toDouble())
-            val accelerationDelta = abs(accelerationCurrent-accelerationPrevious).toFloat()
-            accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
-            accelerationPrevious = accelerationCurrent
-            if (accelerationLowCutFilter > shakeThreshold && shakeCount > shakeCountThreshold) {
+                // normalize calculate magnitude of vector
+                accelerationCurrent = sqrt((x*x + y*y + z*z).toDouble())
+                val accelerationDelta = abs(accelerationCurrent-accelerationPrevious).toFloat()
+                accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
+                accelerationPrevious = accelerationCurrent
+                if (accelerationLowCutFilter > shakeThreshold && shakeCount > shakeCountThreshold) {
 
-                if (!trackingSteps) {
-                    accelerationCurrent = 9.809989073394384
-                    accelerationPrevious = 9.809989073394384
-                    accelerationLowCutFilter = 0.0f
-                    mSensorManager.flush(this)
+                    if (!trackingSteps) {
+                        accelerationCurrent = 9.809989073394384
+                        accelerationPrevious = 9.809989073394384
+                        accelerationLowCutFilter = 0.0f
+                        mSensorManager.flush(this)
 
-                    // TODO: Start tracking steps
-                    Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
+                        trackingSteps = true
 
-                    // initialize media player
-                    mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_start)
-                    mediaPlayer.start()
+                        // initialize media player
+                        mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_start)
+                        mediaPlayer.start()
 
-                    trackingSteps = true
-                } else {
-                    accelerationCurrent = 9.809989073394384
-                    accelerationPrevious = 9.809989073394384
-                    accelerationLowCutFilter = 0.0f
-                    mSensorManager.flush(this)
 
-                    // TODO: Stop tracking steps
-                    Toast.makeText(this, "Step counter has stopped tracking steps", Toast.LENGTH_SHORT).show()
+                    } else {
+                        accelerationCurrent = 9.809989073394384
+                        accelerationPrevious = 9.809989073394384
+                        accelerationLowCutFilter = 0.0f
+                        mSensorManager.flush(this)
 
-                    // initialize media player
-                    mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_stop)
-                    mediaPlayer.start()
+                        Toast.makeText(this, "Step counter has stopped tracking steps", Toast.LENGTH_SHORT).show()
+                        trackingSteps = false
 
-                    trackingSteps = false
+                        // initialize media player
+                        mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_stop)
+                        mediaPlayer.start()
+                    }
                 }
             }
         }
