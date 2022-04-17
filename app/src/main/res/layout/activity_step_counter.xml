@@ -19,7 +19,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
             <TextView
                 android:id="@+id/textViewStepsHeader"
                 android:layout_width="match_parent"
@@ -133,6 +138,7 @@
         <Space
                     android:layout_width="match_parent"
                     android:layout_height="64dp" />
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
