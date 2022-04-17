@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.viewModels
@@ -35,6 +36,9 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     private var prevTime: Long = System.currentTimeMillis()
     private var shakeCount: Int = 0
     private var shakeCountThreshold: Int = 2
+
+    private lateinit var mediaPlayer: MediaPlayer
+    private var trackingSteps: Boolean = false
 
     private val userViewModel: UserViewModel by viewModels()
 
@@ -181,13 +185,36 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
             accelerationLowCutFilter = accelerationLowCutFilter * 0.9f + accelerationDelta
             accelerationPrevious = accelerationCurrent
             if (accelerationLowCutFilter > shakeThreshold && shakeCount > shakeCountThreshold) {
-                accelerationCurrent = 9.809989073394384
-                accelerationPrevious = 9.809989073394384
-                accelerationLowCutFilter = 0.0f
-                mSensorManager.flush(this)
 
-                // TODO: Start tracking steps
-                Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
+                if (!trackingSteps) {
+                    accelerationCurrent = 9.809989073394384
+                    accelerationPrevious = 9.809989073394384
+                    accelerationLowCutFilter = 0.0f
+                    mSensorManager.flush(this)
+
+                    // TODO: Start tracking steps
+                    Toast.makeText(this, "Step counter is now tracking steps", Toast.LENGTH_SHORT).show()
+
+                    // initialize media player
+                    mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_start)
+                    mediaPlayer.start()
+
+                    trackingSteps = true
+                } else {
+                    accelerationCurrent = 9.809989073394384
+                    accelerationPrevious = 9.809989073394384
+                    accelerationLowCutFilter = 0.0f
+                    mSensorManager.flush(this)
+
+                    // TODO: Stop tracking steps
+                    Toast.makeText(this, "Step counter has stopped tracking steps", Toast.LENGTH_SHORT).show()
+
+                    // initialize media player
+                    mediaPlayer = MediaPlayer.create(this, R.raw.step_counter_stop)
+                    mediaPlayer.start()
+
+                    trackingSteps = false
+                }
             }
         }
     }
