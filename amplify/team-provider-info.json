@@ -1,0 +1,21 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-lifestyle-dev-202714-authRole",
+      "UnauthRoleArn": "arn:aws:iam::212645559319:role/amplify-lifestyle-dev-202714-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::212645559319:role/amplify-lifestyle-dev-202714-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-lifestyle-dev-202714-deployment",
+      "UnauthRoleName": "amplify-lifestyle-dev-202714-unauthRole",
+      "StackName": "amplify-lifestyle-dev-202714",
+      "StackId": "arn:aws:cloudformation:us-west-2:212645559319:stack/amplify-lifestyle-dev-202714/3b0b0c40-bf88-11ec-b48c-06e9df57c41f",
+      "AmplifyAppId": "d236y7mx6tbz4h"
+    },
+    "categories": {
+      "auth": {
+        "lifestyle3425d4f6": {},
+        "true": {}
+      }
+    }
+  }
+}

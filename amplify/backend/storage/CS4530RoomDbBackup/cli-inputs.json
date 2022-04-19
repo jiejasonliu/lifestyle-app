@@ -1,0 +1,18 @@
+{
+  "resourceName": "CS4530RoomDbBackup",
+  "policyUUID": "d3c8a71f",
+  "bucketName": "db-backups",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
