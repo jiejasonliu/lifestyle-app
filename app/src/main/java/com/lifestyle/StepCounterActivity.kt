@@ -52,6 +52,8 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_step_counter)
 
+        supportActionBar?.hide()
+
         textViewTodaysSteps = findViewById(R.id.textViewTodaysSteps)
         textViewTotalSteps = findViewById(R.id.textViewTotalSteps)
         editTextStepGoal = findViewById(R.id.editTextStepGoal)
