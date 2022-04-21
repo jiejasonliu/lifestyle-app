@@ -16,6 +16,8 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.roundToInt
+import com.lifestyle.db.LifestyleDatabase
+import com.lifestyle.models.WeatherEntity
 
 class WeatherRepository private constructor(private val appContext: Context)  {
 
@@ -23,6 +25,8 @@ class WeatherRepository private constructor(private val appContext: Context)  {
     var hourlyWeatherData = MutableLiveData<JSONObject?>()
     private var lat: Float? = null
     private var long: Float? = null
+    private lateinit var userCity:String
+    var weatherDao = LifestyleDatabase.getInstance(appContext).weatherDao()
 
     companion object Factory {
         private var instance: WeatherRepository? = null
@@ -38,6 +42,7 @@ class WeatherRepository private constructor(private val appContext: Context)  {
     }
 
     fun fetchWeatherData(userCity: String) {
+        this.userCity = userCity
         getLatLong(userCity)
     }
 
@@ -85,6 +90,10 @@ class WeatherRepository private constructor(private val appContext: Context)  {
             withContext(Dispatchers.IO) {
                 // Call Openweathermaps API
                 val data = downloadUrl(stringUrl)
+                insertUser(WeatherEntity(
+                    city = userCity,
+                    weatherdata = data
+                ))
                 hourlyWeatherData.postValue(JSONObject(data))
 
                 // Parse the response
@@ -141,4 +150,6 @@ class WeatherRepository private constructor(private val appContext: Context)  {
             long = (data[0] as JSONObject).getString("lon").toFloat()
         }
     }
+
+    fun insertUser(weather: WeatherEntity) = weatherDao.insert(weather)
 }

@@ -11,6 +11,4 @@ data class WeatherEntity(
 
     @ColumnInfo(name="weatherdata")  val weatherdata: String,
 
-    @ColumnInfo(name="timestamp")  val timestamp: Long,
-
 )
