@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.lifestyle.models.SettingsEntity
 import com.lifestyle.models.UserProfileEntity
+import com.lifestyle.models.WeatherEntity
 import java.util.concurrent.Executors
 
-@Database(entities = [UserProfileEntity::class, SettingsEntity::class], version = 1)
+@Database(entities = [UserProfileEntity::class, SettingsEntity::class, WeatherEntity::class], version = 1)
 abstract class LifestyleDatabase : RoomDatabase() {
 
     abstract fun userProfileDao(): UserProfileDao
     abstract fun settingsDao(): SettingsDao
+    abstract fun weatherDao(): WeatherDao
 
     companion object Factory {
         @Volatile private var instance: LifestyleDatabase? = null
